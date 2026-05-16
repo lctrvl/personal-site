@@ -1,0 +1,100 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+import { domains } from '../../config';
+
+const all = (await getCollection('projects'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Group by domain in the order defined in config
+const groups = (Object.keys(domains) as Array<keyof typeof domains>).map((key) => ({
+  key,
+  label: domains[key].label,
+  short: domains[key].short,
+  items: all.filter((p) => p.data.domain === key),
+}));
+---
+<Base title="Things I've Made" description="A curated catalog of projects — woodworking, software, road trips, cooking — with the journey told honestly: what worked, what didn't, what I learned.">
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow">Catalog</p>
+      <h1>Things I’ve made</h1>
+      <p class="lede">
+        Objects, apps, routes, meals. The kind of work I do because I want
+        to, not because someone’s paying me to. Each entry tries to tell
+        the journey honestly — including the parts that didn’t go well —
+        because the polished outcome is usually the least interesting
+        thing about a project.
+      </p>
+    </div>
+  </section>
+
+  {groups.map((group) => group.items.length > 0 && (
+    <section class="domain-section" id={group.key}>
+      <div class="container">
+        <header class="domain-head">
+          <h2>{group.label}</h2>
+          <span class="count">{group.items.length} {group.items.length === 1 ? 'entry' : 'entries'}</span>
+        </header>
+        <div class="project-list">
+          {group.items.map((project, i) => (
+            <ProjectCard project={project} index={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  ))}
+</Base>
+
+<style>
+  .page-hero {
+    padding-block: var(--space-2xl) var(--space-l);
+  }
+  .page-hero .eyebrow { margin-bottom: var(--space-s); }
+  .page-hero h1 {
+    font-size: var(--step-5);
+    font-weight: 300;
+    margin-bottom: var(--space-m);
+  }
+  .lede {
+    max-width: 56ch;
+    font-size: var(--step-1);
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-variation-settings: 'opsz' 100;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  .domain-section {
+    padding-block: var(--space-xl);
+  }
+  .domain-section + .domain-section {
+    padding-top: var(--space-l);
+  }
+
+  .domain-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-m);
+    margin-bottom: var(--space-l);
+    padding-bottom: var(--space-s);
+  }
+  .domain-head h2 {
+    font-size: var(--step-3);
+    font-weight: 400;
+    font-style: italic;
+    font-variation-settings: 'opsz' 80;
+    color: var(--ink);
+  }
+  .count {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+  }
+</style>

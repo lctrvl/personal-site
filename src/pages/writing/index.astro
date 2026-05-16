@@ -1,0 +1,125 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const all = (await getCollection('writing'))
+  .filter((w) => !w.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+---
+<Base title="Writing" description="Essays, poems, and reflections.">
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow">Writing</p>
+      <h1>Essays, notes, and the occasional poem</h1>
+      <p class="lede">
+        Thinking in public, slowly. On work, on attention, on the world
+        between the office and the workshop.
+      </p>
+    </div>
+  </section>
+
+  <section class="list-section">
+    <div class="container">
+      {all.length === 0 ? (
+        <p class="empty">Nothing posted yet. Soon.</p>
+      ) : (
+        <ul class="writing-list">
+          {all.map((w) => (
+            <li>
+              <a href={`/writing/${w.slug}`}>
+                <div class="w-meta">
+                  <span class="w-date">{fmt(w.data.date)}</span>
+                  <span class="w-kind">{w.data.kind}</span>
+                </div>
+                <h3 class="w-title">{w.data.title}</h3>
+                {w.data.subtitle && <p class="w-sub">{w.data.subtitle}</p>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page-hero { padding-block: var(--space-2xl) var(--space-l); }
+  .page-hero .eyebrow { margin-bottom: var(--space-s); }
+  .page-hero h1 { font-size: var(--step-5); font-weight: 300; margin-bottom: var(--space-m); }
+  .lede {
+    max-width: 56ch;
+    font-size: var(--step-1);
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-variation-settings: 'opsz' 100;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  .list-section { padding-block: var(--space-l) var(--space-2xl); }
+
+  .empty {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink-muted);
+    font-size: var(--step-1);
+    padding: var(--space-xl) 0;
+    text-align: center;
+  }
+
+  .writing-list {
+    list-style: none;
+    padding: 0;
+    border-top: 1px solid var(--rule-strong);
+  }
+  .writing-list li { border-bottom: 1px solid var(--rule); }
+  .writing-list a {
+    display: block;
+    padding: var(--space-l) 0;
+    color: var(--ink);
+    text-decoration: none;
+    transition: padding 200ms ease;
+  }
+  .writing-list a:hover { padding-left: 0.5rem; text-decoration: none; }
+
+  .w-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 0.6rem;
+  }
+  .w-date {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+  }
+  .w-kind {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--brass);
+  }
+  .w-title {
+    font-size: var(--step-3);
+    font-weight: 400;
+    transition: color 200ms ease;
+    line-height: 1.1;
+  }
+  .writing-list a:hover .w-title { color: var(--oxblood); }
+  .w-sub {
+    margin-top: 0.5em;
+    color: var(--ink-soft);
+    font-size: var(--step-1);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-variation-settings: 'opsz' 100;
+    max-width: 50ch;
+  }
+</style>

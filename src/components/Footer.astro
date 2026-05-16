@@ -1,0 +1,96 @@
+---
+import { site } from '../config';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="colophon">
+        <p class="eyebrow">Colophon</p>
+        <p>
+          Set in <em>Fraunces</em> and <em>Inter Tight</em>. Built with
+          <a href="https://astro.build">Astro</a>. Hand-tended since {year}.
+        </p>
+      </div>
+      <div class="elsewhere">
+        <p class="eyebrow">Elsewhere</p>
+        <ul>
+          {site.social.map((s) => (
+            <li><a href={s.href}>{s.label}</a></li>
+          ))}
+        </ul>
+      </div>
+      <div class="mark">
+        <p class="quote">
+          “The obstacle on the path becomes the way.”
+        </p>
+        <p class="cite">— Marcus Aurelius</p>
+      </div>
+    </div>
+    <div class="rule">
+      <span>© {year} {site.name}</span>
+      <span>Made slowly, with attention.</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-3xl);
+    padding-block: var(--space-xl) var(--space-l);
+    border-top: 1px solid var(--rule);
+    background: linear-gradient(to bottom, transparent, rgba(28, 26, 23, 0.04));
+    position: relative;
+    z-index: 2;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-l);
+    margin-bottom: var(--space-xl);
+  }
+
+  .footer-grid p { color: var(--ink-soft); font-size: var(--step--1); }
+  .footer-grid .eyebrow { margin-bottom: 0.75rem; }
+  .footer-grid em { color: var(--oxblood); font-style: italic; }
+
+  .elsewhere ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .mark .quote {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--step-1);
+    font-weight: 300;
+    font-variation-settings: 'opsz' 100;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .mark .cite {
+    margin-top: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-muted);
+  }
+
+  .rule {
+    padding-top: var(--space-m);
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-s);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+</style>

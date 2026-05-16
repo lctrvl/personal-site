@@ -1,0 +1,279 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { domains } from '../../config';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+interface Props { project: CollectionEntry<'projects'>; }
+const { project } = Astro.props;
+const { Content } = await project.render();
+const { title, summary, domain, kind, date, dateEnd, status, tags, pullquote, cover, coverAlt } = project.data;
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+const dateLabel = dateEnd ? `${fmt(date)} – ${fmt(dateEnd)}` : fmt(date);
+
+// Related projects (same domain, excluding this one)
+const all = await getCollection('projects');
+const related = all
+  .filter((p) => p.data.domain === domain && p.slug !== project.slug && !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+---
+<Base title={title} description={summary}>
+  <article class="case">
+    <header class="case-head">
+      <div class="container narrow">
+        <p class="eyebrow">
+          <span>{domains[domain].label}</span>
+          <span aria-hidden="true">·</span>
+          <span>{kind}</span>
+        </p>
+        <h1>{title}</h1>
+        <p class="summary">{summary}</p>
+
+        <dl class="case-meta">
+          <div>
+            <dt>When</dt>
+            <dd>{dateLabel}</dd>
+          </div>
+          <div>
+            <dt>Status</dt>
+            <dd class={`status-${status}`}>{status}</dd>
+          </div>
+          {tags.length > 0 && (
+            <div class="meta-tags">
+              <dt>Tags</dt>
+              <dd>
+                <ul>
+                  {tags.map((t) => <li>{t}</li>)}
+                </ul>
+              </dd>
+            </div>
+          )}
+        </dl>
+      </div>
+    </header>
+
+    {cover && (
+      <figure class="cover">
+        <div class="container">
+          <img src={cover} alt={coverAlt || ''} loading="eager" />
+        </div>
+      </figure>
+    )}
+
+    {pullquote && (
+      <div class="pullquote-band">
+        <div class="container narrow">
+          <p>“{pullquote}”</p>
+        </div>
+      </div>
+    )}
+
+    <div class="container narrow">
+      <div class="prose case-body">
+        <Content />
+      </div>
+    </div>
+
+    {related.length > 0 && (
+      <aside class="related">
+        <div class="container narrow">
+          <p class="eyebrow">More like this</p>
+          <ul>
+            {related.map((r) => (
+              <li>
+                <a href={`/made/${r.slug}`}>
+                  <span class="r-title">{r.data.title}</span>
+                  <span class="r-kind">{r.data.kind}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+    )}
+
+    <nav class="case-foot">
+      <div class="container narrow">
+        <a href="/made" class="back">← All entries</a>
+      </div>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .narrow {
+    max-width: 760px;
+  }
+  .case-head {
+    padding-block: var(--space-2xl) var(--space-l);
+  }
+
+  /* Cover image */
+  .cover {
+    margin-block: var(--space-l) var(--space-xl);
+  }
+  .cover img {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: cover;
+    box-shadow: 0 1px 0 var(--rule-strong), 0 30px 60px -20px rgba(28, 26, 23, 0.25);
+  }
+  .case-head .eyebrow {
+    margin-bottom: var(--space-m);
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+  }
+  .case-head h1 {
+    font-size: var(--step-5);
+    font-weight: 300;
+    margin-bottom: var(--space-m);
+    line-height: 1;
+  }
+  .summary {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 300;
+    font-variation-settings: 'opsz' 100;
+    color: var(--ink-soft);
+    line-height: 1.4;
+    max-width: 36ch;
+  }
+
+  .case-meta {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-m);
+    border-top: 1px solid var(--rule);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-l);
+  }
+  .case-meta > div { min-width: 120px; }
+  .case-meta dt {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    margin-bottom: 0.4em;
+  }
+  .case-meta dd {
+    font-size: 0.95rem;
+    color: var(--ink);
+    font-family: var(--font-mono);
+  }
+  .status-active, .status-ongoing { color: var(--brass) !important; }
+  .status-complete { color: var(--ink-soft) !important; }
+  .status-shelved { color: var(--ink-muted) !important; }
+
+  .meta-tags { flex-basis: 100%; }
+  .meta-tags ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .meta-tags li {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.3em 0.7em;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    color: var(--ink-muted);
+  }
+
+  .pullquote-band {
+    margin-block: var(--space-xl) var(--space-l);
+    padding-block: var(--space-l);
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(176, 132, 56, 0.08),
+      transparent
+    );
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .pullquote-band p {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    font-weight: 300;
+    font-style: italic;
+    font-variation-settings: 'opsz' 100;
+    color: var(--ink);
+    line-height: 1.3;
+    text-align: center;
+    max-width: 30ch;
+    margin-inline: auto;
+  }
+
+  .case-body {
+    padding-block: var(--space-l) var(--space-xl);
+  }
+
+  /* Related */
+  .related {
+    margin-top: var(--space-xl);
+    padding-block: var(--space-l);
+    border-top: 1px solid var(--rule-strong);
+  }
+  .related .eyebrow { margin-bottom: var(--space-m); }
+  .related ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-m);
+  }
+  .related a {
+    display: block;
+    padding: var(--space-m);
+    border: 1px solid var(--rule);
+    color: var(--ink);
+    text-decoration: none;
+    transition: border 200ms ease, background 200ms ease;
+  }
+  .related a:hover {
+    border-color: var(--oxblood);
+    background: rgba(107, 30, 30, 0.04);
+    text-decoration: none;
+  }
+  .r-title {
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    margin-bottom: 0.5em;
+    line-height: 1.2;
+  }
+  .r-kind {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+  }
+
+  .case-foot {
+    padding-block: var(--space-l) var(--space-xl);
+  }
+  .back {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+  }
+</style>

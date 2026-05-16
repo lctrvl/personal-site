@@ -1,0 +1,56 @@
+---
+import '../styles/global.css';
+import { site } from '../config';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  noIndex?: boolean;
+}
+
+const { title, description = site.description, noIndex = false } = Astro.props;
+const fullTitle = title ? `${title} — ${site.name}` : `${site.name}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    {noIndex && <meta name="robots" content="noindex" />}
+    <link rel="alternate" type="application/rss+xml" title={`${site.name} — Writing`} href="/writing/rss.xml" />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+
+    <style>
+      .skip-link {
+        position: absolute;
+        left: -9999px;
+        top: 1rem;
+        background: var(--ink);
+        color: var(--paper);
+        padding: 0.5rem 1rem;
+        z-index: 100;
+      }
+      .skip-link:focus { left: 1rem; }
+      main { position: relative; z-index: 2; }
+    </style>
+  </body>
+</html>

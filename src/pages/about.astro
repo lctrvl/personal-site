@@ -1,0 +1,99 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../config';
+---
+<Base title="About" description="A longer introduction — professionally and otherwise.">
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow">About</p>
+      <h1>The longer version</h1>
+    </div>
+  </section>
+
+  <section class="about-body">
+    <div class="container narrow">
+      <div class="prose">
+        <p>
+          I’ve spent most of my career in procurement and third-party risk
+          management — the unglamorous machinery of how large organizations
+          decide who to work with and how to handle the consequences. I like
+          this work, which surprises people. The interesting parts of business
+          happen at the boundaries between organizations, and I get to live
+          there.
+        </p>
+
+        <p>
+          Outside of that, I run a small HOA, manage a rental property a few
+          states away, build furniture in a workshop slowly accumulating
+          better tools, ride a motorcycle on long, deliberately scenic routes,
+          cook a lot, and read more philosophy than is probably useful. None
+          of these are hobbies in the dabbling sense. They’re different rooms
+          in the same house — and they’re what this site is mostly about.
+        </p>
+
+        <h2>Professionally</h2>
+
+        <p>
+          I lead transformation work on a Third Party Risk Management (TPRM)
+          team at a large organization. The work spans operating-model
+          design, platform evaluation, executive communication, and the
+          long, patient business of moving institutional consensus.
+          Confidentiality keeps most of the specifics off this site, but a
+          short version of what I’m good at:
+        </p>
+
+        <ul>
+          <li>
+            Translating between people who think in spreadsheets and people
+            who think in metaphors
+          </li>
+          <li>
+            Designing processes that survive contact with a real
+            organization
+          </li>
+          <li>
+            Knowing when something needs more rigor and when it needs less
+          </li>
+          <li>
+            Telling executives uncomfortable things in a way they can hear
+          </li>
+        </ul>
+
+        <p>
+          A longer professional record, with current role and selected
+          initiatives, lives on my <a href="https://linkedin.com/in/yourhandle">LinkedIn</a>.
+          If you want to talk about work specifically — current role, past
+          roles, or what I might do next — email is best.
+        </p>
+
+        <h2>What I’m working out</h2>
+
+        <p>
+          How to operate at the boundary where human judgment and machine
+          capability meet — not as theatre, but as actual practice. Most of
+          what gets called “AI strategy” inside large companies is still
+          downstream of pre-AI assumptions, and the work of redesigning from
+          first principles is harder and slower than anyone wants to admit.
+          I write about this occasionally in the
+          <a href="/writing">writing section</a>.
+        </p>
+
+        <h2>How to reach me</h2>
+
+        <p>
+          Email is best: <a href={`mailto:${site.email}`}>{site.email}</a>.
+          I read everything, reply to most things, and reply to the
+          interesting things faster than I should.
+        </p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .narrow { max-width: 720px; }
+  .page-hero { padding-block: var(--space-2xl) var(--space-l); }
+  .page-hero .eyebrow { margin-bottom: var(--space-s); }
+  .page-hero h1 { font-size: var(--step-5); font-weight: 300; }
+  .about-body { padding-block: var(--space-l) var(--space-2xl); }
+</style>

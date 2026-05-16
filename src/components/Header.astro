@@ -1,0 +1,105 @@
+---
+import { site } from '../config';
+const pathname = Astro.url.pathname;
+const isActive = (href: string) =>
+  href === '/' ? pathname === '/' : pathname.startsWith(href);
+---
+<header class="site-header">
+  <div class="container">
+    <div class="header-grid">
+      <a href="/" class="brand" aria-label="Home">
+        <span class="brand-mark" aria-hidden="true">A.</span>
+        <span class="brand-name">{site.name}</span>
+      </a>
+      <nav aria-label="Primary">
+        <ul>
+          {site.nav.map((item) => (
+            <li>
+              <a href={item.href} class:list={[{ 'is-active': isActive(item.href) }]}>
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    padding-block: var(--space-m);
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 0;
+    background: rgba(244, 237, 224, 0.85);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    z-index: 10;
+  }
+
+  .header-grid {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-l);
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.6em;
+    color: var(--ink);
+    text-decoration: none;
+    font-family: var(--font-display);
+  }
+  .brand:hover { text-decoration: none; }
+
+  .brand-mark {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--oxblood);
+    font-variation-settings: 'opsz' 40;
+  }
+  .brand-name {
+    font-size: 1.05rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    align-items: center;
+  }
+
+  nav a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding-block: 0.25em;
+    position: relative;
+    transition: color 200ms ease;
+  }
+  nav a:hover { color: var(--ink); }
+  nav a.is-active { color: var(--oxblood); }
+  nav a.is-active::after {
+    content: '';
+    position: absolute;
+    bottom: -0.4em;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background: var(--brass);
+    border-radius: 50%;
+  }
+
+  @media (max-width: 540px) {
+    .brand-name { display: none; }
+    nav ul { gap: 1rem; }
+  }
+</style>

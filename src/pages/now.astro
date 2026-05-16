@@ -1,0 +1,83 @@
+---
+import Base from '../layouts/Base.astro';
+
+// Edit this whenever you want to update what you're focused on.
+const updated = new Date('2026-05-01');
+const fmt = updated.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+---
+<Base title="Now" description="What I'm focused on right now.">
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow">Now</p>
+      <h1>What I’m focused on</h1>
+      <p class="updated">Last updated {fmt}</p>
+    </div>
+  </section>
+
+  <section class="now-body">
+    <div class="container narrow">
+      <div class="prose">
+        <h2>At work</h2>
+        <p>
+          Leading an RFI to redesign our supplier intake architecture around
+          an orchestration layer rather than another point tool. Making the
+          case — to senior sponsors who built the last generation of this
+          stack — that the platform we choose now has to be AI-ready by
+          design, not retrofitted later.
+        </p>
+
+        <h2>In the shop</h2>
+        <p>
+          Working through plans for a walnut office desk. Slower than I’d
+          like; the hand-cut joinery is taking weekends I don’t always have.
+        </p>
+
+        <h2>On the road</h2>
+        <p>
+          Planning a longer ride for the fall. The cross-country trip last
+          October left me wanting more time in the Appalachians.
+        </p>
+
+        <h2>On the page</h2>
+        <p>
+          Rereading the <em>Meditations</em>, working through a Camus
+          biography, returning to the <em>Bhagavad Gita</em> for the third
+          time and finding it different again.
+        </p>
+
+        <h2>At home</h2>
+        <p>
+          Sarah and I are mapping the next 6–12 years with more deliberation
+          than feels comfortable. The point is to make the eventual
+          transitions feel like arrivals, not escapes.
+        </p>
+      </div>
+      <p class="footnote">
+        Inspired by <a href="https://nownownow.com/about">Derek Sivers’ “Now Page”</a>.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .narrow { max-width: 720px; }
+  .page-hero { padding-block: var(--space-2xl) var(--space-l); }
+  .page-hero .eyebrow { margin-bottom: var(--space-s); }
+  .page-hero h1 { font-size: var(--step-5); font-weight: 300; margin-bottom: var(--space-s); }
+  .updated {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+  }
+  .now-body { padding-block: var(--space-l) var(--space-2xl); }
+  .footnote {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-m);
+    border-top: 1px solid var(--rule);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+  }
+</style>

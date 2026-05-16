@@ -1,0 +1,251 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+import { site, domains } from '../config';
+
+const allProjects = (await getCollection('projects'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const featured = allProjects.slice(0, 4);
+
+const allWriting = (await getCollection('writing'))
+  .filter((w) => !w.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+---
+<Base>
+  <section class="hero">
+    <div class="container">
+      <p class="eyebrow">A working notebook</p>
+      <h1 class="display">
+        <span class="line-1">The things</span>
+        <span class="line-2">I <em>make</em>,</span>
+        <span class="line-3">on purpose.</span>
+      </h1>
+      <p class="tagline">{site.tagline}</p>
+
+      <div class="hero-aside">
+        <p>
+          A catalog of what I’ve built, ridden, cooked, and figured out in the
+          hours that belong to me. Each entry tries to tell the whole journey —
+          the why, the how, what worked, what didn’t, and what it taught me —
+          because the polished result is usually the least interesting part.
+        </p>
+        <div class="cta-row">
+          <a href="/made" class="cta">See the catalog</a>
+          <a href="/about" class="cta-secondary">More about me →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="featured">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Recent entries</p>
+        <h2>Lately in the catalog</h2>
+      </div>
+
+      <div class="project-list">
+        {featured.map((project, i) => (
+          <ProjectCard project={project} index={i} />
+        ))}
+      </div>
+
+      <p class="see-all">
+        <a href="/made">See everything →</a>
+      </p>
+    </div>
+  </section>
+
+  {allWriting.length > 0 && (
+    <section class="writing-strip">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Lately</p>
+          <h2>From the notebook</h2>
+        </div>
+        <ul class="writing-list">
+          {allWriting.map((w) => (
+            <li>
+              <a href={`/writing/${w.slug}`}>
+                <span class="w-date">{fmtDate(w.data.date)}</span>
+                <span class="w-title">{w.data.title}</span>
+                <span class="w-kind">{w.data.kind}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+        <p class="see-all"><a href="/writing">All writing →</a></p>
+      </div>
+    </section>
+  )}
+</Base>
+
+<style>
+  .hero {
+    padding-block: var(--space-2xl) var(--space-xl);
+    position: relative;
+  }
+  .hero .eyebrow { margin-bottom: var(--space-m); }
+
+  .display {
+    font-size: var(--step-6);
+    line-height: 0.95;
+    font-weight: 300;
+    margin-bottom: var(--space-m);
+  }
+  .display em {
+    color: var(--oxblood);
+    font-style: italic;
+    font-weight: 400;
+  }
+  .line-1, .line-2, .line-3 { display: block; }
+  .line-2 { padding-left: clamp(2rem, 8vw, 6rem); }
+  .line-3 { padding-left: clamp(4rem, 16vw, 12rem); }
+
+  .tagline {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 300;
+    font-style: italic;
+    font-variation-settings: 'opsz' 100;
+    max-width: 36ch;
+    color: var(--ink-soft);
+    margin-top: var(--space-m);
+  }
+
+  .hero-aside {
+    margin-top: var(--space-xl);
+    max-width: 56ch;
+    margin-left: auto;
+    border-left: 1px solid var(--rule-strong);
+    padding-left: var(--space-l);
+  }
+  .hero-aside p {
+    color: var(--ink-soft);
+    font-size: var(--step-1);
+    line-height: 1.6;
+  }
+
+  .cta-row {
+    margin-top: var(--space-m);
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+    flex-wrap: wrap;
+  }
+
+  .cta {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.9em 1.6em;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    transition: background 200ms ease, transform 200ms ease;
+  }
+  .cta:hover {
+    background: var(--oxblood);
+    text-decoration: none;
+    color: var(--paper);
+    transform: translateY(-1px);
+  }
+
+  .cta-secondary {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+  }
+
+  /* Sections */
+  .featured, .writing-strip {
+    padding-block: var(--space-xl);
+  }
+
+  .section-head { margin-bottom: var(--space-l); }
+  .section-head .eyebrow { margin-bottom: 0.5rem; }
+  .section-head h2 {
+    font-size: var(--step-3);
+    font-weight: 400;
+  }
+
+  .project-list {
+    margin-top: var(--space-m);
+  }
+
+  .see-all {
+    margin-top: var(--space-l);
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .see-all a { color: var(--ink); }
+
+  /* Writing list */
+  .writing-list {
+    list-style: none;
+    padding: 0;
+    border-top: 1px solid var(--rule-strong);
+  }
+  .writing-list li {
+    border-bottom: 1px solid var(--rule);
+  }
+  .writing-list a {
+    display: grid;
+    grid-template-columns: 12rem 1fr auto;
+    gap: var(--space-m);
+    padding: var(--space-m) 0;
+    align-items: baseline;
+    color: var(--ink);
+    text-decoration: none;
+    transition: padding 200ms ease;
+  }
+  .writing-list a:hover {
+    padding-left: 0.5rem;
+    color: var(--oxblood);
+    text-decoration: none;
+  }
+  .w-date {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+  }
+  .w-title {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 400;
+    line-height: 1.2;
+    font-variation-settings: 'opsz' 60;
+  }
+  .w-kind {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--brass);
+  }
+
+  @media (max-width: 720px) {
+    .hero-aside {
+      margin-left: 0;
+    }
+    .writing-list a {
+      grid-template-columns: 1fr;
+      gap: 0.4rem;
+    }
+  }
+</style>

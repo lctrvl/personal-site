@@ -1,0 +1,98 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const items = await getCollection('writing');
+  return items.map((item) => ({
+    params: { slug: item.slug },
+    props: { item },
+  }));
+}
+
+interface Props { item: CollectionEntry<'writing'>; }
+const { item } = Astro.props;
+const { Content } = await item.render();
+const { title, subtitle, date, kind } = item.data;
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+---
+<Base title={title} description={subtitle || title}>
+  <article class="essay">
+    <header class="essay-head">
+      <div class="container narrow">
+        <p class="eyebrow">
+          <span>{kind}</span>
+          <span aria-hidden="true">·</span>
+          <span>{fmt(date)}</span>
+        </p>
+        <h1>{title}</h1>
+        {subtitle && <p class="subtitle">{subtitle}</p>}
+      </div>
+    </header>
+
+    <div class="container narrow">
+      <div class="prose essay-body">
+        <Content />
+      </div>
+    </div>
+
+    <nav class="essay-foot">
+      <div class="container narrow">
+        <a href="/writing" class="back">← All writing</a>
+      </div>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .narrow { max-width: 700px; }
+
+  .essay-head {
+    padding-block: var(--space-2xl) var(--space-l);
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: var(--space-l);
+  }
+  .essay-head .eyebrow {
+    margin-bottom: var(--space-m);
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+  }
+  .essay-head h1 {
+    font-size: var(--step-5);
+    font-weight: 300;
+    margin-bottom: var(--space-m);
+    line-height: 1;
+  }
+  .subtitle {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 300;
+    font-style: italic;
+    font-variation-settings: 'opsz' 100;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+
+  .essay-body { padding-block: var(--space-l) var(--space-xl); }
+  .essay-body :global(p:first-child::first-letter) {
+    font-family: var(--font-display);
+    font-size: 4em;
+    font-weight: 400;
+    float: left;
+    line-height: 0.8;
+    padding-right: 0.1em;
+    padding-top: 0.1em;
+    color: var(--oxblood);
+  }
+
+  .essay-foot { padding-block: var(--space-l) var(--space-xl); }
+  .back {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+  }
+</style>
