@@ -1,10 +1,8 @@
 import { defineConfig } from 'astro/config';
-import sitemap from '@astrojs/sitemap';
 
-// CHANGE THIS to your real site URL once you have a domain
 export default defineConfig({
   site: 'https://alexsilvestre.com',
-  integrations: [sitemap()],
+  integrations: [],
   markdown: {
     shikiConfig: {
       theme: 'github-dark-dimmed',
