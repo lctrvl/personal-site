@@ -2,7 +2,7 @@
 // These values are imported throughout the site.
 
 export const site = {
-  name: 'Alex Lastname',
+  name: 'Alex Silvestre',
   // The line under your name on the homepage. Make it yours.
   tagline: 'Procurement strategy by trade. Woodworker, rider, builder, and cook in the hours that belong to me.',
   // The longer description used in <meta> tags
@@ -12,11 +12,10 @@ export const site = {
   url: 'https://your-domain.com',
 
   // Where to reach you
-  email: 'you@example.com',
+  email: 'alex.silvestre@me.com',
   social: [
-    { label: 'Email', href: 'mailto:you@example.com' },
-    { label: 'LinkedIn', href: 'https://linkedin.com/in/yourhandle' },
-    { label: 'GitHub', href: 'https://github.com/yourhandle' },
+    { label: 'Email', href: 'mailto:alex.silvestre@me.com' },
+    { label: 'GitHub', href: 'https://github.com/lctrvl' },
     // Add or remove as you like
   ],
 
@@ -36,5 +35,6 @@ export const domains = {
   craft: { label: 'In the shop', short: 'Craft' },
   code: { label: 'At the keyboard', short: 'Code' },
   road: { label: 'On the road', short: 'Road' },
-  table: { label: 'At the table', short: 'Table' },
+  table: { label: 'At the table', short: 'Table' }
+  plants: { label: 'My Plants', short: 'Plants' },
 };
