@@ -35,6 +35,6 @@ export const domains = {
   craft: { label: 'In the shop', short: 'Craft' },
   code: { label: 'At the keyboard', short: 'Code' },
   road: { label: 'On the road', short: 'Road' },
-  table: { label: 'At the table', short: 'Table' }
+  table: { label: 'At the table', short: 'Table' },
   plants: { label: 'My Plants', short: 'Plants' },
 };
