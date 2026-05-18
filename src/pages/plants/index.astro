@@ -1,0 +1,178 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const all = (await getCollection('plants'))
+  .filter((p) => !p.data.draft)
+  .sort((a, b) => a.data.arrived.valueOf() - b.data.arrived.valueOf());
+
+const statusOrder = ['with-me', 'propagated', 'rehomed', 'gone'] as const;
+const statusLabels: Record<typeof statusOrder[number], string> = {
+  'with-me': 'With me now',
+  'propagated': 'Propagated forward',
+  'rehomed': 'Given on to others',
+  'gone': 'No longer with me',
+};
+
+const groups = statusOrder.map((status) => ({
+  status,
+  label: statusLabels[status],
+  items: all.filter((p) => p.data.status === status),
+}));
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+---
+<Base title="Plants" description="A field journal of plants I've kept — newcomers, long companions, and those that didn't survive my learning curve.">
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow">Field journal</p>
+      <h1>Plants</h1>
+      <p class="lede">
+        Plants don’t speak English. The practice is learning theirs —
+        slowly, over years, by paying attention. This is a record of
+        who’s been with me, who’s gone, and what each of them has
+        taught me about reading what a living thing is trying to say.
+      </p>
+    </div>
+  </section>
+
+  {groups.map((group) => group.items.length > 0 && (
+    <section class="status-section">
+      <div class="container">
+        <header class="status-head">
+          <h2>{group.label}</h2>
+          <span class="count">{group.items.length}</span>
+        </header>
+        <ul class="plant-list">
+          {group.items.map((plant) => {
+            const { commonName, botanicalName, nickname, arrived, departed, location } = plant.data;
+            return (
+              <li>
+                <a href={`/plants/${plant.id}`} class="plant-link">
+                  <div class="plant-names">
+                    <span class="common">{commonName}</span>
+                    {nickname && <span class="nick">“{nickname}”</span>}
+                    {botanicalName && <span class="botanical"><em>{botanicalName}</em></span>}
+                  </div>
+                  <div class="plant-meta">
+                    <span class="arc">
+                      {fmt(arrived)}
+                      {departed ? ` – ${fmt(departed)}` : ' – present'}
+                    </span>
+                    {location && <span class="loc">· {location}</span>}
+                  </div>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </section>
+  ))}
+</Base>
+
+<style>
+  .page-hero { padding-block: var(--space-2xl) var(--space-l); }
+  .page-hero .eyebrow { margin-bottom: var(--space-s); }
+  .page-hero h1 {
+    font-size: var(--step-5);
+    font-weight: 300;
+    margin-bottom: var(--space-m);
+  }
+  .lede {
+    max-width: 56ch;
+    font-size: var(--step-1);
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-variation-settings: 'opsz' 100;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  .status-section { padding-block: var(--space-l); }
+  .status-section + .status-section {
+    border-top: 1px solid var(--rule);
+    margin-top: var(--space-l);
+  }
+
+  .status-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-m);
+    margin-bottom: var(--space-m);
+  }
+  .status-head h2 {
+    font-size: var(--step-2);
+    font-weight: 400;
+    font-style: italic;
+    font-variation-settings: 'opsz' 80;
+    color: var(--ink);
+  }
+  .count {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+  }
+
+  .plant-list { list-style: none; padding: 0; }
+  .plant-list li { border-bottom: 1px solid var(--rule); }
+  .plant-list li:first-child { border-top: 1px solid var(--rule); }
+  .plant-link {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: var(--space-m) 0;
+    color: var(--ink);
+    text-decoration: none;
+    transition: padding 200ms ease;
+  }
+  .plant-link:hover {
+    padding-left: 0.5rem;
+    text-decoration: none;
+  }
+
+  .plant-names {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .common {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 400;
+    font-variation-settings: 'opsz' 60;
+    color: var(--ink);
+    transition: color 200ms ease;
+  }
+  .plant-link:hover .common { color: var(--oxblood); }
+  .nick {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--step-1);
+    font-variation-settings: 'opsz' 100;
+    color: var(--brass);
+  }
+  .botanical {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-muted);
+    text-transform: lowercase;
+    letter-spacing: 0.02em;
+  }
+
+  .plant-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-muted);
+  }
+</style>

@@ -9,7 +9,7 @@ export const site = {
   description:
     'A curated catalog of personal projects — woodworking, software, road trips, cooking — by someone who treats craft as a serious practice.',
   // Your real domain once you have one
-  url: 'https://your-domain.com',
+  url: 'https://alexsilvestre.com',
 
   // Where to reach you
   email: 'alex.silvestre@me.com',
@@ -23,6 +23,7 @@ export const site = {
   nav: [
     { label: "Things I've Made", href: '/made' },
     { label: 'Writing', href: '/writing' },
+    { label: 'Plants', href: '/plants' },
     { label: 'About', href: '/about' },
     { label: 'Now', href: '/now' },
   ],
@@ -36,5 +37,4 @@ export const domains = {
   code: { label: 'At the keyboard', short: 'Code' },
   road: { label: 'On the road', short: 'Road' },
   table: { label: 'At the table', short: 'Table' },
-  plants: { label: 'My Plants', short: 'Plants' },
 };

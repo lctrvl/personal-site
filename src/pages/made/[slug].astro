@@ -1,19 +1,19 @@
 ---
 import Base from '../../layouts/Base.astro';
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { domains } from '../../config';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
   return projects.map((project) => ({
-    params: { slug: project.slug },
+    params: { slug: project.id },
     props: { project },
   }));
 }
 
 interface Props { project: CollectionEntry<'projects'>; }
 const { project } = Astro.props;
-const { Content } = await project.render();
+const { Content } = await render(project);
 const { title, summary, domain, kind, date, dateEnd, status, tags, pullquote, cover, coverAlt } = project.data;
 
 const fmt = (d: Date) =>
@@ -23,7 +23,15 @@ const dateLabel = dateEnd ? `${fmt(date)} – ${fmt(dateEnd)}` : fmt(date);
 // Related projects (same domain, excluding this one)
 const all = await getCollection('projects');
 const related = all
-  .filter((p) => p.data.domain === domain && p.slug !== project.slug && !p.data.draft)
+  .filter((p) => p.data.domain === domain && p.id !== project.id && !p.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+---
+
+// Related projects (same domain, excluding this one)
+const all = await getCollection('projects');
+const related = all
+  .filter((p) => p.data.domain === domain && p.id !== project.id && !p.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 ---
@@ -91,7 +99,7 @@ const related = all
           <ul>
             {related.map((r) => (
               <li>
-                <a href={`/made/${r.slug}`}>
+                <a href={`/made/${r.id}`}>
                   <span class="r-title">{r.data.title}</span>
                   <span class="r-kind">{r.data.kind}</span>
                 </a>
