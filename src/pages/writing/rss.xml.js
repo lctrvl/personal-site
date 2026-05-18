@@ -15,7 +15,7 @@ export async function GET(context) {
       title: item.data.title,
       pubDate: item.data.date,
       description: item.data.subtitle || '',
-      link: `/writing/${item.slug}/`,
+      link: `/writing/${item.id}/`,
     })),
   });
 }

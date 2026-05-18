@@ -15,7 +15,7 @@ const fmt = (d: Date) =>
 const dateLabel = dateEnd ? `${fmt(date)} – ${fmt(dateEnd)}` : fmt(date);
 ---
 <article class="project-card" style={`--i: ${index}`}>
-  <a href={`/made/${project.slug}`} class="project-link">
+  <a href={`/made/${project.id}`} class="project-link">
     <div class="card-head">
       <div class="meta">
         <span class="domain">{domainLabel}</span>

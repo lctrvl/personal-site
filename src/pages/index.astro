@@ -73,7 +73,7 @@ const fmtDate = (d: Date) =>
         <ul class="writing-list">
           {allWriting.map((w) => (
             <li>
-              <a href={`/writing/${w.slug}`}>
+              <a href={`/writing/${w.id}`}>
                 <span class="w-date">{fmtDate(w.data.date)}</span>
                 <span class="w-title">{w.data.title}</span>
                 <span class="w-kind">{w.data.kind}</span>
