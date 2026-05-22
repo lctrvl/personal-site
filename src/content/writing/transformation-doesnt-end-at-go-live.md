@@ -15,7 +15,6 @@ A week after go-live, more than a hundred issues had been logged. Basic user rol
 
 I was brought in to clean it up. I have been brought in to clean up versions of this story enough times to recognize it on sight.
 
----
 
 <strong>Here is what I have come to believe.</strong>
 
@@ -27,7 +26,6 @@ What gets shipped, at the end, is a platform that delivers on a fraction of the 
 
 Then the work actually starts. The work nobody planned for. The work that has no budget.
 
----
 
 <strong>The mistake is to treat transformation as an event.</strong>
 
@@ -45,7 +43,7 @@ The third is to stop declaring victory at go-live. Build the post-implementation
 
 This is where being on the seam between business and technology earns its keep. The flaws that produce post-go-live chaos are almost always visible months before they cause damage. Someone has to be willing to flag them and slow the project down to address them. That someone usually has to speak both languages, hold both sets of pressures, and have the political weight to make the conversation happen.
 
----
+<strong>The balancing act.</strong>
 
 There is a fair pushback to everything I just said. Sometimes the world does not give you the luxury of incremental change. Sometimes the right move is radical change at speed, and the operator who keeps tightening bolts while the ground shifts is the operator who ends up perfectly optimized for a market that no longer exists.
 
@@ -53,23 +51,19 @@ The discipline is knowing when to apply which mode. Move radically when the stra
 
 The mistake is treating these as opposing philosophies. They are not. They are sequential modes of the same discipline. The companies that win are the ones that can recognize a step-function moment, move on it decisively, and then settle back into the steady tempo of making the change actually work. Both modes, applied at the right time, under the same governance.
 
----
-
 <strong>This used to be a problem of large transformations. It is now a problem of every AI implementation in the field.</strong>
 
 AI moves faster than any technology any of us have worked with. Models change. Capabilities expand. Tools that were experimental six months ago are production-ready now, and tools that look production-ready today will be obsolete in a year. The temptation to ship something, anything, and declare victory is overwhelming. So is the opposite temptation, to keep planning, keep evaluating, keep waiting for the dust to settle. Both are losing positions.
 
 The companies that will get real return from AI are not the ones with the most ambitious launch plans. They are not the ones running the most pilots either. They are the ones whose operating models can absorb a moving capability frontier without breaking, who can recognize a step-function moment when it arrives, and who can return quickly to the steady work of making it operate.
 
----
-
 <strong>A note on what all this produces.</strong>
 
-The discipline I am describing is not about smoother implementations. Smoother is a side effect. The thing this discipline produces is implementations whose business cases actually materialize. The cost reductions that survive past year one. The revenue streams that depend on the system actually being used. The risk reductions that hold up under regulatory scrutiny because the controls are real, not theoretical.
+The discipline I am describing is not about smoother implementations. Smoother is a side effect. The thing this discipline produces is implementations whose business cases actually materialize. The cost reductions that doesn't kill value. The revenue streams that depend on the system actually being used. The risk reductions that hold up under regulatory scrutiny because the controls are real, not theoretical.
 
 The system that is used is the system that delivers. The system that is not used is a sunk cost wearing the costume of a capability. Most transformation projects produce more of the second than the first. That is the real cost of declaring victory at go-live, and it is paid in the currency that matters most to the executives who funded the project.
 
----
+<strong>It is not sexy.</strong>
 
 This is the part where I should give you something inspirational. I do not have it.
 
