@@ -4,10 +4,10 @@
 export const site = {
   name: 'Alex Silvestre',
   // The line under your name on the homepage. Make it yours.
-  tagline: 'Procurement strategy by trade. Woodworker, rider, builder, and cook in the hours that belong to me.',
+  tagline: 'Transformation practioner. Forever curious. Woodworker, gardner, cook, rider.',
   // The longer description used in <meta> tags
   description:
-    'A curated catalog of personal projects — woodworking, software, road trips, cooking — by someone who treats craft as a serious practice.',
+    'A  curated catalog of personal projects — woodworking, apps, motorcycle road trips, gardening, cooking — by someone who treats craft as a serious practice. I experiment. I fail. I learn. I get things done.',
   // Your real domain once you have one
   url: 'https://alexsilvestre.com',
 
