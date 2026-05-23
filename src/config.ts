@@ -21,12 +21,13 @@ export const site = {
 
   // Nav order
   nav: [
-    { label: "Things I've Made", href: '/made' },
-    { label: 'Writing', href: '/writing' },
-    { label: 'Plants', href: '/plants' },
-    { label: 'About', href: '/about' },
-    { label: 'Now', href: '/now' },
-  ],
+  { label: "Things I've Made", href: '/made' },
+  { label: 'Plants', href: '/plants' },
+  { label: 'Table', href: '/table' },
+  { label: 'Writing', href: '/writing' },
+  { label: 'About', href: '/about' },
+  { label: 'Now', href: '/now' },
+],
 };
 
 // Labels for the project "domain" field — controls how projects are grouped

@@ -1,8 +1,6 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
-// Projects: completed or ongoing pieces of work with a beginning and an end.
-// Woodworking, software, road trips, cooking. The case-study collection.
 const projects = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/projects' }),
   schema: z.object({
@@ -22,7 +20,6 @@ const projects = defineCollection({
   }),
 });
 
-// Writing: essays, notes, poems.
 const writing = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/writing' }),
   schema: z.object({
@@ -35,9 +32,6 @@ const writing = defineCollection({
   }),
 });
 
-// Plants: an ongoing field journal. One entry per plant, tracked across
-// its whole arc — arrival, life, sometimes departure. Plants that have
-// died stay on their own page; the closing entry tells the truth.
 const plants = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/plants' }),
   schema: z.object({
@@ -57,4 +51,16 @@ const plants = defineCollection({
   }),
 });
 
-export const collections = { projects, writing, plants };
+const meals = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/meals' }),
+  schema: z.object({
+    title: z.string(),
+    date: z.date(),
+    cover: z.string().optional(),
+    coverAlt: z.string().optional(),
+    order: z.number().default(0),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { projects, writing, plants, meals };

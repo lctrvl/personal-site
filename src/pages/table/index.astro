@@ -1,0 +1,194 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const all = (await getCollection('meals'))
+  .filter((m) => !m.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Group by year for the index display
+const byYear = all.reduce<Record<string, typeof all>>((acc, meal) => {
+  const year = meal.data.date.getFullYear().toString();
+  if (!acc[year]) acc[year] = [];
+  acc[year].push(meal);
+  return acc;
+}, {});
+
+const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+---
+<Base title="Table" description="A slow accumulating record of meals I have cooked, what works in each one and why.">
+  <section class="page-hero">
+    <div class="container">
+      <p class="eyebrow">From the kitchen</p>
+      <h1>Table</h1>
+      <p class="lede">
+        A record of meals I have cooked. Not a recipe site. Not a food blog. Random daily meals reflecting my lifestyle. A slowly accumulating document of how I choose to feed my body.
+      </p>
+    </div>
+  </section>
+
+  {years.length === 0 ? (
+    <section class="empty">
+      <div class="container narrow">
+        <p>Nothing posted yet. The first meal is coming.</p>
+      </div>
+    </section>
+  ) : (
+    years.map((year) => (
+      <section class="year-section">
+        <div class="container">
+          <header class="year-head">
+            <h2>{year}</h2>
+            <span class="count">{byYear[year].length} {byYear[year].length === 1 ? 'meal' : 'meals'}</span>
+          </header>
+          <ul class="meal-list">
+            {byYear[year].map((meal) => (
+              <li>
+                <a href={`/table/${meal.id}`} class="meal-link">
+                  <div class="meal-thumb">
+                    {meal.data.cover ? (
+                      <img src={meal.data.cover} alt={meal.data.coverAlt || ''} loading="lazy" />
+                    ) : (
+                      <div class="thumb-placeholder" aria-hidden="true"></div>
+                    )}
+                  </div>
+                  <div class="meal-meta">
+                    <span class="meal-date">{fmt(meal.data.date)}</span>
+                    <h3 class="meal-title">{meal.data.title}</h3>
+                  </div>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    ))
+  )}
+</Base>
+
+<style>
+  .page-hero { padding-block: var(--space-2xl) var(--space-l); }
+  .page-hero .eyebrow { margin-bottom: var(--space-s); }
+  .page-hero h1 {
+    font-size: var(--step-5);
+    font-weight: 300;
+    margin-bottom: var(--space-m);
+  }
+  .lede {
+    max-width: 56ch;
+    font-size: var(--step-1);
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-variation-settings: 'opsz' 100;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  .empty {
+    padding-block: var(--space-xl) var(--space-3xl);
+  }
+  .empty .narrow { max-width: 720px; }
+  .empty p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--step-1);
+    color: var(--ink-muted);
+  }
+
+  .year-section { padding-block: var(--space-l); }
+  .year-section + .year-section {
+    border-top: 1px solid var(--rule);
+    margin-top: var(--space-l);
+  }
+
+  .year-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-m);
+    margin-bottom: var(--space-l);
+  }
+  .year-head h2 {
+    font-size: var(--step-3);
+    font-weight: 400;
+    font-style: italic;
+    font-variation-settings: 'opsz' 80;
+    color: var(--ink);
+  }
+  .count {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+  }
+
+  .meal-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--space-l);
+  }
+
+  .meal-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    transition: transform 250ms ease;
+  }
+  .meal-link:hover {
+    text-decoration: none;
+    transform: translateY(-2px);
+  }
+
+  .meal-thumb {
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--paper-deep);
+    margin-bottom: var(--space-s);
+    box-shadow: 0 1px 0 var(--rule-strong), 0 10px 30px -16px rgba(28, 26, 23, 0.2);
+  }
+  .meal-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 400ms ease;
+  }
+  .meal-link:hover .meal-thumb img {
+    transform: scale(1.04);
+  }
+  .thumb-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--paper-deep), rgba(176, 132, 56, 0.1));
+  }
+
+  .meal-meta {
+    padding-top: 0.4rem;
+  }
+  .meal-date {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+  .meal-title {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    font-weight: 400;
+    font-variation-settings: 'opsz' 60;
+    color: var(--ink);
+    line-height: 1.15;
+    transition: color 200ms ease;
+  }
+  .meal-link:hover .meal-title {
+    color: var(--oxblood);
+  }
+</style>

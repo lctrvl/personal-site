@@ -1,0 +1,115 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const meals = await getCollection('meals');
+  return meals.map((meal) => ({
+    params: { slug: meal.id },
+    props: { meal },
+  }));
+}
+
+interface Props { meal: CollectionEntry<'meals'>; }
+const { meal } = Astro.props;
+const { Content } = await render(meal);
+const { title, date, cover, coverAlt } = meal.data;
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+---
+<Base title={title} description={`A meal entry: ${title}.`}>
+  <article class="meal">
+    {cover && (
+      <figure class="cover">
+        <div class="container">
+          <img src={cover} alt={coverAlt || ''} loading="eager" />
+        </div>
+      </figure>
+    )}
+
+    <header class="meal-head">
+      <div class="container narrow">
+        <p class="eyebrow">
+          <span>From the kitchen</span>
+          <span aria-hidden="true">·</span>
+          <span>{fmt(date)}</span>
+        </p>
+        <h1>{title}</h1>
+      </div>
+    </header>
+
+    <div class="container narrow">
+      <div class="prose meal-body">
+        <Content />
+      </div>
+    </div>
+
+    <nav class="meal-foot">
+      <div class="container narrow">
+        <a href="/table" class="back">← All meals</a>
+      </div>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .narrow { max-width: 720px; }
+
+  .cover {
+    margin-block: var(--space-l) var(--space-l);
+  }
+  .cover img {
+    width: 100%;
+    max-height: 70vh;
+    object-fit: cover;
+    box-shadow: 0 1px 0 var(--rule-strong), 0 30px 60px -20px rgba(28, 26, 23, 0.25);
+  }
+
+  .meal-head {
+    padding-block: var(--space-m) var(--space-l);
+  }
+  .meal-head .eyebrow {
+    margin-bottom: var(--space-m);
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+  }
+  .meal-head h1 {
+    font-size: var(--step-5);
+    font-weight: 300;
+    line-height: 1;
+  }
+
+  .meal-body { padding-block: var(--space-l) var(--space-xl); }
+  .meal-body :global(hr) {
+    border: 0;
+    margin: 3em 0;
+    text-align: center;
+  }
+  .meal-body :global(hr::after) {
+    content: '⁂';
+    color: var(--brass);
+    font-size: 1.5rem;
+    letter-spacing: 0.5em;
+  }
+  /* Style any h2 in the commentary section more quietly */
+  .meal-body :global(h2) {
+    font-size: var(--step-2);
+    font-style: italic;
+    color: var(--ink-soft);
+    font-variation-settings: 'opsz' 80;
+    margin-top: 2.5em;
+    padding-top: 1em;
+    border-top: 1px solid var(--rule);
+  }
+
+  .meal-foot { padding-block: var(--space-l) var(--space-xl); }
+  .back {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+  }
+</style>
