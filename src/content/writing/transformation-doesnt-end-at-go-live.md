@@ -1,13 +1,13 @@
 ---
 title: "Transformation Doesn't End at Go-Live"
-subtitle: "On why so many transformation projects collapse the day after they succeed, and the discipline that keeps them alive, especially in the fast-moving age of AI."
+subtitle: "Most transformations succeed at go-live and fail in the twelve months after. This is an essay about why that pattern is so common, what the discipline of preventing it actually looks like in practice, and why AI implementations are about to discover the same trap at speed."
 date: 2026-05-19
 kind: "essay"
 tags: ["Transformation", "AI implementation", "Operating model", "Governance"]
 draft: false
 ---
 
-I <strong>once walked into a transformation project a week before go-live.</strong>
+<strong>I once walked into a transformation project a week before go-live.</strong>
 
 The project had been running for eighteen months. The team was about to deliver on time and on budget, and they were already planning the celebration. They had every right to feel proud. By the metrics that matter to most project managers, this was a win.
 

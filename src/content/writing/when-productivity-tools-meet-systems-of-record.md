@@ -1,13 +1,13 @@
 ---
 title: "When productivity tools meet systems of record"
-subtitle: "On why consumer AI chat tools are the wrong architecture for autonomous risk decisions, and what proper investment actually looks like."
+subtitle: "Speed is a Vanity Metric: Moving from the Illusion of AI Adoption to the Reality of Defensible Architecture."
 date: 2026-05-25
 kind: "essay"
 tags: ["AI implementation", "Third Party Risk", "Architecture", "Regulated environments"]
 draft: false
 ---
 
-*Companies are under pressure to show AI adoption and produce quick returns. For regulated institutions, the better question is not adoption speed but capital allocation: where can we invest in AI without compromising the compliance deliverables we cannot fail on, in the months / years before the technology is mature enough for broader deployment?*
+*Companies are under pressure to show AI adoption and produce quick returns. For regulated environments, the better question is not AI adoption speed but capital allocation: where should AI investment be made without compromising the compliance deliverables?*
 
 **I keep watching the same conversation play out.**
 
@@ -43,11 +43,21 @@ None of these properties are present in a chat interface where someone types a l
 
 Two things, in order.
 
-First, be honest about which decisions are which. Not every step of a vendor assessment needs to be a system of record. Drafting an initial summary of a vendor's security posture is a productivity task. Pulling key terms from a contract is a productivity task. Generating a first-pass narrative for a finished assessment is a productivity task. These are appropriate uses for chat AI, provided a human reviews the output before it becomes consequential. The category error happens when the decision itself, the rating, the control validation, the risk classification, gets handed to the productivity tool.
+**First, be honest about which decisions are which.** 
 
-Second, when you build toward autonomy, build the architecture, not the prompt. The shift required is from "writing better prompts" to "designing systems that include AI as a component." Inside a Microsoft enterprise environment, as an example, the architecture is roughly as follows. Vendor documents are ingested and indexed in **Azure AI Search**, which provides the retrieval layer that lets the system find the precise passages relevant to any given control or question. **Copilot Studio** hosts bounded conversational agents, each one scoped to a specific task with constrained inputs and structured outputs, rather than a single chat interface trying to do everything. **Power Automate** orchestrates the workflow, calling the agents in sequence, holding state between calls, applying deterministic rules at the gates where AI judgment must not be the sole arbiter. **Azure AI Foundry** handles the steps where custom prompts and rigid output schemas are required and Copilot Studio's declarative model is too constrained. **Dataverse** stores the final assessment as a structured artifact, with audit trails, version history, and the field-level integrity that downstream systems and regulators will rely on.
+Not every step of a Third Party risk assessment needs to be a system of record. Drafting an initial summary of a vendor's security posture is a productivity task. Pulling key terms (e.g., RTOs, SLAs, KIs) from a contract is a productivity task. Generating a first-pass narrative for a finished assessment is a productivity task. These are appropriate uses for chat AI, provided a human reviews the output before it becomes consequential. The category error happens when the decision itself, the risk rating / scoring, the control validation, the risk classification, gets handed to the productivity tool.
 
-**This is just an example.** Outside of the Microsoft enterprise environment, there are many, many tools available to build the right technology stack for the right architecture!
+**Second, when you build toward autonomy, build the architecture, not the prompt.** 
+
+The shift required is from "writing better prompts" to "designing systems that include AI as a component." Inside a Microsoft enterprise environment, as an example, the architecture is roughly as follows. 
+
+1. Vendor documents are ingested and indexed in **Azure AI Search**, which provides the retrieval layer that lets the system find the precise passages relevant to any given control or question. 
+2. **Copilot Studio** hosts bounded conversational agents, each one scoped to a specific task with constrained inputs and structured outputs, rather than a single chat interface trying to do everything. 
+3. **Power Automate** orchestrates the workflow, calling the agents in sequence, holding state between calls, applying deterministic rules at the gates where AI judgment must not be the sole arbiter. 
+4. **Azure AI Foundry** handles the steps where custom prompts and rigid output schemas are required and Copilot Studio's declarative model is too constrained. 
+5. **Dataverse** stores the final assessment as a structured artifact, with audit trails, version history, and the field-level integrity that downstream systems and regulators will rely on.
+
+*(Note: This is just one ecosystem example. Outside of Microsoft, there are many excellent tools available to build the exact same technology stack framework.)*
 
 **What this looks like in practice:** when a SOC 2 report arrives, it is ingested into Azure AI Search and chunked by section. Power Automate triggers a Copilot Studio agent specifically scoped to extract control statements from the encryption section. The agent's structured output is validated by a Power Automate decision step against the firm's control taxonomy. If validation fails, the assessment is routed for human review. If it passes, the next agent runs on the next control area, and so on, until the assessment is complete and stored in Dataverse with full traceability to source passages. The AI is doing constrained, supervised work at each step. The orchestration, the state, the validation, the audit trail, all of that is handled by traditional enterprise software wrapped around the AI.
 
