@@ -4,7 +4,7 @@
 export const site = {
   name: 'Alex Silvestre',
   // The line under your name on the homepage. Make it yours.
-  tagline: 'Transformation practioner. Forever curious. Woodworker, gardner, cook, rider.',
+  tagline: 'Transformation practitioner. Forever curious. Woodworker, gardener, cook, rider.',
   // The longer description used in <meta> tags
   description:
     'A  curated catalog of personal projects — woodworking, apps, motorcycle road trips, gardening, cooking — by someone who treats craft as a serious practice. I experiment. I fail. I learn. I get things done.',
@@ -26,7 +26,6 @@ export const site = {
   { label: 'Table', href: '/table' },
   { label: 'Writing', href: '/writing' },
   { label: 'About', href: '/about' },
-  { label: 'Now', href: '/now' },
 ],
 };
 

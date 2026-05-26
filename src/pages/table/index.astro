@@ -6,9 +6,8 @@ const all = (await getCollection('meals'))
   .filter((m) => !m.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
-// Group by year for the index display
 const byYear = all.reduce<Record<string, typeof all>>((acc, meal) => {
-  const year = meal.data.date.getFullYear().toString();
+  const year = meal.data.date.getUTCFullYear().toString();
   if (!acc[year]) acc[year] = [];
   acc[year].push(meal);
   return acc;
@@ -17,7 +16,7 @@ const byYear = all.reduce<Record<string, typeof all>>((acc, meal) => {
 const years = Object.keys(byYear).sort((a, b) => Number(b) - Number(a));
 
 const fmt = (d: Date) =>
-  d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+  d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', timeZone: 'UTC' });
 ---
 <Base title="Table" description="A slow accumulating record of meals I have cooked, what works in each one and why.">
   <section class="page-hero">
@@ -25,7 +24,9 @@ const fmt = (d: Date) =>
       <p class="eyebrow">From the kitchen</p>
       <h1>Table</h1>
       <p class="lede">
-        A record of meals I have cooked. Not a recipe site. Not a food blog. Random daily meals reflecting my lifestyle. A slowly accumulating document of how I choose to feed my body.
+        A record of meals I have cooked. Not a recipe site. Not a food blog.
+        What I cooked, what worked in it, and why. A slowly accumulating
+        document of how one person ate over decades.
       </p>
     </div>
   </section>
@@ -48,11 +49,11 @@ const fmt = (d: Date) =>
             {byYear[year].map((meal) => (
               <li>
                 <a href={`/table/${meal.id}`} class="meal-link">
-                  <div class="meal-thumb">
+                  <div class="meal-image">
                     {meal.data.cover ? (
                       <img src={meal.data.cover} alt={meal.data.coverAlt || ''} loading="lazy" />
                     ) : (
-                      <div class="thumb-placeholder" aria-hidden="true"></div>
+                      <div class="image-placeholder" aria-hidden="true"></div>
                     )}
                   </div>
                   <div class="meal-meta">
@@ -87,9 +88,7 @@ const fmt = (d: Date) =>
     line-height: 1.5;
   }
 
-  .empty {
-    padding-block: var(--space-xl) var(--space-3xl);
-  }
+  .empty { padding-block: var(--space-xl) var(--space-3xl); }
   .empty .narrow { max-width: 720px; }
   .empty p {
     font-family: var(--font-display);
@@ -110,6 +109,8 @@ const fmt = (d: Date) =>
     justify-content: space-between;
     gap: var(--space-m);
     margin-bottom: var(--space-l);
+    padding-bottom: var(--space-s);
+    border-bottom: 1px solid var(--rule);
   }
   .year-head h2 {
     font-size: var(--step-3);
@@ -129,66 +130,100 @@ const fmt = (d: Date) =>
   .meal-list {
     list-style: none;
     padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: var(--space-l);
+    margin: 0;
+  }
+  .meal-list li + li {
+    margin-top: var(--space-l);
+    padding-top: var(--space-l);
+    border-top: 1px solid var(--rule);
   }
 
   .meal-link {
-    display: block;
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 4fr);
+    gap: var(--space-l);
+    align-items: center;
     color: inherit;
     text-decoration: none;
     transition: transform 250ms ease;
   }
   .meal-link:hover {
     text-decoration: none;
-    transform: translateY(-2px);
   }
 
-  .meal-thumb {
-    aspect-ratio: 4 / 3;
+  .meal-image {
+    aspect-ratio: 3 / 2;
     overflow: hidden;
     background: var(--paper-deep);
-    margin-bottom: var(--space-s);
-    box-shadow: 0 1px 0 var(--rule-strong), 0 10px 30px -16px rgba(28, 26, 23, 0.2);
+    box-shadow: 0 1px 0 var(--rule-strong), 0 20px 40px -20px rgba(28, 26, 23, 0.2);
   }
-  .meal-thumb img {
+  .meal-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 400ms ease;
+    transition: transform 600ms ease;
   }
-  .meal-link:hover .meal-thumb img {
-    transform: scale(1.04);
+  .meal-link:hover .meal-image img {
+    transform: scale(1.03);
   }
-  .thumb-placeholder {
+  .image-placeholder {
     width: 100%;
     height: 100%;
     background: linear-gradient(135deg, var(--paper-deep), rgba(176, 132, 56, 0.1));
   }
 
   .meal-meta {
-    padding-top: 0.4rem;
+    padding: var(--space-s) 0;
   }
   .meal-date {
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--ink-muted);
     display: block;
-    margin-bottom: 0.2rem;
+    margin-bottom: var(--space-s);
   }
   .meal-title {
     font-family: var(--font-display);
-    font-size: var(--step-2);
+    font-size: var(--step-3);
     font-weight: 400;
     font-variation-settings: 'opsz' 60;
     color: var(--ink);
-    line-height: 1.15;
+    line-height: 1.1;
     transition: color 200ms ease;
   }
   .meal-link:hover .meal-title {
     color: var(--oxblood);
+  }
+
+  /* Alternate row layout: every second entry flips image to right */
+  .meal-list li:nth-child(even) .meal-link {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 5fr);
+  }
+  .meal-list li:nth-child(even) .meal-link .meal-image {
+    order: 2;
+  }
+  .meal-list li:nth-child(even) .meal-link .meal-meta {
+    order: 1;
+    text-align: right;
+  }
+
+  @media (max-width: 700px) {
+    .meal-link,
+    .meal-list li:nth-child(even) .meal-link {
+      grid-template-columns: 1fr;
+      gap: var(--space-s);
+    }
+    .meal-list li:nth-child(even) .meal-link .meal-image {
+      order: initial;
+    }
+    .meal-list li:nth-child(even) .meal-link .meal-meta {
+      order: initial;
+      text-align: left;
+    }
+    .meal-image {
+      aspect-ratio: 16 / 9;
+    }
   }
 </style>
