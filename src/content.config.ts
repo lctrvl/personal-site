@@ -58,6 +58,7 @@ const meals = defineCollection({
     date: z.date(),
     cover: z.string().optional(),
     coverAlt: z.string().optional(),
+    commentary: z.string().optional(),
     order: z.number().default(0),
     draft: z.boolean().default(false),
   }),

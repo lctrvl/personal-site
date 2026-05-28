@@ -1,10 +1,10 @@
 ---
 title: "A small app for HSA receipts"
-summary: "A mobile web app to track medical expenses for HSA reimbursement, because the existing tools either cost too much or want too much access."
+summary: "A local web app built with AI to track medical expenses for HSA reimbursement."
 domain: "code"
-kind: "Software"
-date: 2025-12-01
-status: "ongoing"
+kind: "AI app"
+date: 2026-03-01
+status: "complete"
 tags: ["React", "Vite", "Supabase", "Tailwind", "Personal finance"]
 order: 2
 ---

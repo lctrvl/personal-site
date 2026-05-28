@@ -3,7 +3,7 @@ title: "A cutting board, from what was left over"
 summary: "A small build to use the offcuts from other projects — and a reminder that the most beautiful wood often comes from the pile you were about to throw away."
 domain: "craft"
 kind: "Woodworking"
-date: 2026-04-20
+date: 2026-01-07
 status: "complete"
 tags: ["Scrap wood", "Lamination", "Glue-up", "Hand tools", "Finishing"]
 order: 2

@@ -17,16 +17,8 @@ const { Content } = await render(project);
 const { title, summary, domain, kind, date, dateEnd, status, tags, pullquote, cover, coverAlt } = project.data;
 
 const fmt = (d: Date) =>
-  d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+     d.toLocaleDateString('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' });
 const dateLabel = dateEnd ? `${fmt(date)} – ${fmt(dateEnd)}` : fmt(date);
-
-// Related projects (same domain, excluding this one)
-const all = await getCollection('projects');
-const related = all
-  .filter((p) => p.data.domain === domain && p.id !== project.id && !p.data.draft)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
-  .slice(0, 3);
----
 
 // Related projects (same domain, excluding this one)
 const all = await getCollection('projects');

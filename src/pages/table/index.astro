@@ -43,24 +43,26 @@ const fmt = (d: Date) =>
         <div class="container">
           <header class="year-head">
             <h2>{year}</h2>
-            <span class="count">{byYear[year].length} {byYear[year].length === 1 ? 'meal' : 'meals'}</span>
           </header>
           <ul class="meal-list">
             {byYear[year].map((meal) => (
               <li>
                 <a href={`/table/${meal.id}`} class="meal-link">
-                  <div class="meal-image">
-                    {meal.data.cover ? (
-                      <img src={meal.data.cover} alt={meal.data.coverAlt || ''} loading="lazy" />
-                    ) : (
-                      <div class="image-placeholder" aria-hidden="true"></div>
-                    )}
-                  </div>
-                  <div class="meal-meta">
-                    <span class="meal-date">{fmt(meal.data.date)}</span>
-                    <h3 class="meal-title">{meal.data.title}</h3>
-                  </div>
-                </a>
+  <div class="meal-text">
+    <div class="meal-meta">
+      <span class="meal-date">{fmt(meal.data.date)}</span>
+      <h3 class="meal-title">{meal.data.title}</h3>
+    </div>
+    {meal.data.commentary && (
+      <p class="meal-commentary">{meal.data.commentary}</p>
+    )}
+  </div>
+  {meal.data.cover && (
+    <div class="meal-image">
+      <img src={meal.data.cover} alt={meal.data.coverAlt || ''} loading="lazy" />
+    </div>
+  )}
+</a>
               </li>
             ))}
           </ul>
@@ -72,158 +74,128 @@ const fmt = (d: Date) =>
 
 <style>
   .page-hero { padding-block: var(--space-2xl) var(--space-l); }
-  .page-hero .eyebrow { margin-bottom: var(--space-s); }
-  .page-hero h1 {
-    font-size: var(--step-5);
-    font-weight: 300;
-    margin-bottom: var(--space-m);
-  }
-  .lede {
-    max-width: 56ch;
-    font-size: var(--step-1);
-    font-family: var(--font-display);
-    font-weight: 300;
-    font-variation-settings: 'opsz' 100;
-    color: var(--ink-soft);
-    line-height: 1.5;
-  }
+.page-hero .eyebrow { margin-bottom: var(--space-s); }
+.page-hero h1 {
+  font-size: var(--step-5);
+  font-weight: 300;
+  margin-bottom: var(--space-m);
+}
+.lede {
+  max-width: 56ch;
+  font-size: var(--step-1);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-variation-settings: 'opsz' 100;
+  color: var(--ink-soft);
+  line-height: 1.5;
+}
 
-  .empty { padding-block: var(--space-xl) var(--space-3xl); }
-  .empty .narrow { max-width: 720px; }
-  .empty p {
-    font-family: var(--font-display);
-    font-style: italic;
-    font-size: var(--step-1);
-    color: var(--ink-muted);
-  }
+.empty { padding-block: var(--space-xl) var(--space-3xl); }
+.empty .narrow { max-width: 720px; }
+.empty p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--step-1);
+  color: var(--ink-muted);
+}
 
-  .year-section { padding-block: var(--space-l); }
-  .year-section + .year-section {
-    border-top: 1px solid var(--rule);
-    margin-top: var(--space-l);
-  }
+.year-section { padding-block: var(--space-l); }
+.year-section + .year-section {
+  border-top: 1px solid var(--rule);
+  margin-top: var(--space-l);
+}
 
-  .year-head {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-m);
-    margin-bottom: var(--space-l);
-    padding-bottom: var(--space-s);
-    border-bottom: 1px solid var(--rule);
-  }
-  .year-head h2 {
-    font-size: var(--step-3);
-    font-weight: 400;
-    font-style: italic;
-    font-variation-settings: 'opsz' 80;
-    color: var(--ink);
-  }
-  .count {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--ink-muted);
-  }
+.year-head {
+  margin-bottom: var(--space-l);
+  padding-bottom: var(--space-s);
+  border-bottom: 1px solid var(--rule);
+}
+.year-head h2 {
+  font-size: var(--step-3);
+  font-weight: 400;
+  font-style: italic;
+  font-variation-settings: 'opsz' 80;
+  color: var(--ink);
+}
 
-  .meal-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .meal-list li + li {
-    margin-top: var(--space-l);
-    padding-top: var(--space-l);
-    border-top: 1px solid var(--rule);
-  }
+.meal-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.meal-list li + li {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--rule);
+}
 
+.meal-link {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: var(--space-xl);
+  align-items: start;
+  color: inherit;
+  text-decoration: none;
+}
+.meal-link:hover { text-decoration: none; }
+
+.meal-meta {
+  margin-bottom: var(--space-m);
+}
+.meal-date {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+  display: block;
+  margin-bottom: var(--space-s);
+}
+.meal-title {
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  font-weight: 400;
+  font-variation-settings: 'opsz' 80;
+  color: var(--ink);
+  line-height: 1.2;
+  transition: color 200ms ease;
+}
+.meal-link:hover .meal-title {
+  color: var(--oxblood);
+}
+
+.meal-commentary {
+  font-family: var(--font-display);
+  font-size: var(--step-1);
+  font-variation-settings: 'opsz' 100;
+  color: var(--ink-soft);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.meal-image {
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--paper-deep);
+  width: 220px;
+}
+.meal-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 600ms ease;
+}
+.meal-link:hover .meal-image img {
+  transform: scale(1.02);
+}
+
+@media (max-width: 760px) {
   .meal-link {
-    display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 4fr);
-    gap: var(--space-l);
-    align-items: center;
-    color: inherit;
-    text-decoration: none;
-    transition: transform 250ms ease;
+    grid-template-columns: 1fr;
   }
-  .meal-link:hover {
-    text-decoration: none;
-  }
-
   .meal-image {
-    aspect-ratio: 3 / 2;
-    overflow: hidden;
-    background: var(--paper-deep);
-    box-shadow: 0 1px 0 var(--rule-strong), 0 20px 40px -20px rgba(28, 26, 23, 0.2);
-  }
-  .meal-image img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 600ms ease;
+    order: -1;
   }
-  .meal-link:hover .meal-image img {
-    transform: scale(1.03);
-  }
-  .image-placeholder {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, var(--paper-deep), rgba(176, 132, 56, 0.1));
-  }
-
-  .meal-meta {
-    padding: var(--space-s) 0;
-  }
-  .meal-date {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--ink-muted);
-    display: block;
-    margin-bottom: var(--space-s);
-  }
-  .meal-title {
-    font-family: var(--font-display);
-    font-size: var(--step-3);
-    font-weight: 400;
-    font-variation-settings: 'opsz' 60;
-    color: var(--ink);
-    line-height: 1.1;
-    transition: color 200ms ease;
-  }
-  .meal-link:hover .meal-title {
-    color: var(--oxblood);
-  }
-
-  /* Alternate row layout: every second entry flips image to right */
-  .meal-list li:nth-child(even) .meal-link {
-    grid-template-columns: minmax(0, 4fr) minmax(0, 5fr);
-  }
-  .meal-list li:nth-child(even) .meal-link .meal-image {
-    order: 2;
-  }
-  .meal-list li:nth-child(even) .meal-link .meal-meta {
-    order: 1;
-    text-align: right;
-  }
-
-  @media (max-width: 700px) {
-    .meal-link,
-    .meal-list li:nth-child(even) .meal-link {
-      grid-template-columns: 1fr;
-      gap: var(--space-s);
-    }
-    .meal-list li:nth-child(even) .meal-link .meal-image {
-      order: initial;
-    }
-    .meal-list li:nth-child(even) .meal-link .meal-meta {
-      order: initial;
-      text-align: left;
-    }
-    .meal-image {
-      aspect-ratio: 16 / 9;
-    }
-  }
+}
 </style>

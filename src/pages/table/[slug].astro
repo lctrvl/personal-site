@@ -13,23 +13,15 @@ export async function getStaticPaths() {
 interface Props { meal: CollectionEntry<'meals'>; }
 const { meal } = Astro.props;
 const { Content } = await render(meal);
-const { title, date, cover, coverAlt } = meal.data;
+const { title, date, cover, coverAlt, commentary } = meal.data;
 
 const fmt = (d: Date) =>
-  d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 ---
 <Base title={title} description={`A meal entry: ${title}.`}>
   <article class="meal">
-    {cover && (
-      <figure class="cover">
-        <div class="container">
-          <img src={cover} alt={coverAlt || ''} loading="eager" />
-        </div>
-      </figure>
-    )}
-
     <header class="meal-head">
-      <div class="container narrow">
+      <div class="container">
         <p class="eyebrow">
           <span>From the kitchen</span>
           <span aria-hidden="true">·</span>
@@ -39,14 +31,31 @@ const fmt = (d: Date) =>
       </div>
     </header>
 
-    <div class="container narrow">
-      <div class="prose meal-body">
-        <Content />
+    <div class="container">
+      <div class="meal-layout">
+        <div class="meal-text">
+          <div class="prose meal-body">
+            <Content />
+          </div>
+
+          {commentary && (
+            <aside class="commentary">
+              <h2>What's behind</h2>
+              <p>{commentary}</p>
+            </aside>
+          )}
+        </div>
+
+        {cover && (
+          <figure class="cover">
+            <img src={cover} alt={coverAlt || ''} loading="eager" />
+          </figure>
+        )}
       </div>
     </div>
 
     <nav class="meal-foot">
-      <div class="container narrow">
+      <div class="container">
         <a href="/table" class="back">← All meals</a>
       </div>
     </nav>
@@ -54,20 +63,8 @@ const fmt = (d: Date) =>
 </Base>
 
 <style>
-  .narrow { max-width: 720px; }
-
-  .cover {
-    margin-block: var(--space-l) var(--space-l);
-  }
-  .cover img {
-    width: 100%;
-    max-height: 70vh;
-    object-fit: cover;
-    box-shadow: 0 1px 0 var(--rule-strong), 0 30px 60px -20px rgba(28, 26, 23, 0.25);
-  }
-
   .meal-head {
-    padding-block: var(--space-m) var(--space-l);
+    padding-block: var(--space-2xl) 0;
   }
   .meal-head .eyebrow {
     margin-bottom: var(--space-m);
@@ -76,32 +73,68 @@ const fmt = (d: Date) =>
     gap: 0.5em;
   }
   .meal-head h1 {
-    font-size: var(--step-5);
+    font-size: var(--step-3);
     font-weight: 300;
     line-height: 1;
+    margin-bottom: 0;
   }
 
-  .meal-body { padding-block: var(--space-l) var(--space-xl); }
-  .meal-body :global(hr) {
-    border: 0;
-    margin: 3em 0;
-    text-align: center;
+  .meal-layout {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: var(--space-2xl);
+    align-items: start;
+    padding-block: var(--space-m) var(--space-xl);
   }
-  .meal-body :global(hr::after) {
-    content: '⁂';
-    color: var(--brass);
-    font-size: 1.5rem;
-    letter-spacing: 0.5em;
+
+  .meal-text {
+    max-width: 56ch;
   }
-  /* Style any h2 in the commentary section more quietly */
-  .meal-body :global(h2) {
+
+  .meal-body {
+  margin-bottom: var(--space-l);
+}
+.meal-body :global(p) {
+  font-size: var(--step-0);
+  line-height: 1.6;
+  margin-bottom: 1em;
+  color: var(--ink);
+}
+.meal-body :global(p:last-child) {
+  margin-bottom: 0;
+}
+
+  .commentary {
+    margin-top: var(--space-l);
+    padding-top: var(--space-l);
+    border-top: 1px solid var(--rule);
+  }
+  .commentary h2 {
+    font-family: var(--font-display);
     font-size: var(--step-2);
     font-style: italic;
-    color: var(--ink-soft);
     font-variation-settings: 'opsz' 80;
-    margin-top: 2.5em;
-    padding-top: 1em;
-    border-top: 1px solid var(--rule);
+    color: var(--ink-soft);
+    margin-bottom: 0.5em;
+  }
+  .commentary p {
+    font-family: var(--font-display);
+    font-size: var(--step-1);
+    font-weight: 300;
+    font-variation-settings: 'opsz' 100;
+    color: var(--ink);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .cover {
+    margin: 0;
+  }
+  .cover img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    display: block;
   }
 
   .meal-foot { padding-block: var(--space-l) var(--space-xl); }
@@ -111,5 +144,16 @@ const fmt = (d: Date) =>
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--ink-soft);
+  }
+
+  @media (max-width: 660px) {
+    .meal-layout {
+      grid-template-columns: 1fr;
+      gap: var(--space-l);
+    }
+    .cover {
+      max-width: 480px;
+      order: -1;
+    }
   }
 </style>
