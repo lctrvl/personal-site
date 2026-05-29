@@ -2,7 +2,7 @@
 title: "Frontier Operations"
 subtitle: "On the individual skill of working at the boundary where human judgment meets what AI can do, when that boundary will not hold still."
 date: 2026-04-27
-kind: "essay"
+kind: "professional"
 tags: ["AI implementation", "Frontier operations", "Adaptation", "Leadership"]
 draft: false
 ---

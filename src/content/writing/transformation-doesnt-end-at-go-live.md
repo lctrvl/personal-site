@@ -2,7 +2,7 @@
 title: "Transformation Doesn't End at Go-Live"
 subtitle: "Most transformations succeed at go-live and fail in the twelve months after. This is an essay about why that pattern is so common, what the discipline of preventing it actually looks like in practice, and why AI implementations are about to discover the same trap at speed."
 date: 2026-05-19
-kind: "essay"
+kind: "professional"
 tags: ["Transformation", "AI implementation", "Operating model", "Governance"]
 draft: false
 ---

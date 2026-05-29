@@ -26,7 +26,7 @@ const writing = defineCollection({
     title: z.string(),
     subtitle: z.string().optional(),
     date: z.date(),
-    kind: z.enum(['essay', 'poem', 'note', 'reflection']).default('essay'),
+    kind: z.enum(['professional', 'personal', 'poem']),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
   }),

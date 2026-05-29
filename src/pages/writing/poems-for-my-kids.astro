@@ -1,0 +1,78 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { writingKinds, type WritingKind } from '../../config';
+
+const all = await getCollection('writing', ({ data }) => !data.draft);
+const filtered = all
+  .filter((entry) => entry.data.kind === 'poems')
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+---
+<Base title="Poems for My Kids" description="Poetry written for my children.">
+  <article class="writing-index">
+    <header class="writing-head">
+      <div class="container narrow">
+        <h1>Writing</h1>
+        <p class="lede">Three kinds of writing live here. Professional essays, on transformation and the human-AI boundary. Personal reflections, on the inner work. Poems for my kids.</p>
+
+        <nav class="filter" aria-label="Filter writing by kind">
+          <a href="/writing" class="filter-link">All</a>
+          <span aria-hidden="true">·</span>
+          <a href="/writing/professional-essays" class="filter-link active">Professional Essays</a>
+          <span aria-hidden="true">·</span>
+          <a href="/writing/personal-reflections" class="filter-link">Personal Reflections</a>
+          <span aria-hidden="true">·</span>
+          <a href="/writing/poems-for-my-kids" class="filter-link">Poems for My Kids</a>
+        </nav>
+      </div>
+    </header>
+
+    <div class="container narrow">
+      {filtered.length === 0 ? (
+        <p class="empty">No entries yet.</p>
+      ) : (
+        <ul class="entries">
+          {filtered.map((entry) => (
+            <li class="entry">
+              <a href={`/writing/${entry.id}`}>
+                <p class="eyebrow">
+                  <span class="kind">{writingKinds[entry.data.kind as WritingKind].label}</span>
+                  <span aria-hidden="true">·</span>
+                  <span class="date">{fmt(entry.data.date)}</span>
+                </p>
+                <h2>{entry.data.title}</h2>
+                {entry.data.subtitle && <p class="subtitle">{entry.data.subtitle}</p>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </article>
+</Base>
+
+<style>
+  /* Same styles as index.astro — copy the full <style> block from there */
+  .narrow { max-width: 760px; }
+  .writing-head { padding-block: var(--space-2xl) var(--space-l); }
+  .writing-head h1 { font-size: var(--step-5); font-weight: 300; line-height: 1; margin-bottom: var(--space-m); }
+  .lede { font-family: var(--font-display); font-size: var(--step-1); font-weight: 300; font-variation-settings: 'opsz' 100; color: var(--ink-soft); line-height: 1.5; max-width: 56ch; margin-bottom: var(--space-l); }
+  .filter { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5em; padding-top: var(--space-m); border-top: 1px solid var(--rule); }
+  .filter-link { font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-muted); text-decoration: none; transition: color 200ms ease; }
+  .filter-link:hover { color: var(--ink); text-decoration: none; }
+  .filter-link.active { color: var(--oxblood); border-bottom: 1px solid var(--brass); padding-bottom: 0.1em; }
+  .filter span[aria-hidden] { color: var(--rule-strong); font-family: var(--font-mono); font-size: 0.75rem; }
+  .entries { list-style: none; padding: 0; margin: 0; }
+  .entry { border-top: 1px solid var(--rule-strong); padding-block: var(--space-l); }
+  .entry:last-child { border-bottom: 1px solid var(--rule-strong); }
+  .entry a { display: block; color: inherit; text-decoration: none; }
+  .entry a:hover h2 { color: var(--oxblood); }
+  .eyebrow { font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-muted); margin-bottom: var(--space-s); display: flex; flex-wrap: wrap; gap: 0.5em; }
+  .eyebrow .kind { color: var(--oxblood); }
+  .entry h2 { font-size: var(--step-3); font-weight: 400; margin-bottom: 0.4em; color: var(--ink); transition: color 200ms ease; line-height: 1.2; }
+  .subtitle { font-family: var(--font-display); font-style: italic; font-size: var(--step-1); font-weight: 300; font-variation-settings: 'opsz' 100; color: var(--ink-soft); line-height: 1.5; max-width: 56ch; }
+  .empty { color: var(--ink-muted); font-style: italic; padding-block: var(--space-l); }
+</style>

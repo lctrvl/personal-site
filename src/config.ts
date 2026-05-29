@@ -38,3 +38,10 @@ export const domains = {
   road: { label: 'On the road', short: 'Road' },
   table: { label: 'At the table', short: 'Table' },
 };
+export const writingKinds = {
+  professional: { label: 'Professional Essays', slug: 'professional-essays' },
+  personal: { label: 'Personal Reflections', slug: 'personal-reflections' },
+  poem: { label: 'Poems for My Kids', slug: 'poems-for-my-kids' },
+} as const;
+
+export type WritingKind = keyof typeof writingKinds;

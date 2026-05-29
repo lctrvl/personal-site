@@ -2,7 +2,7 @@
 title: "When Productivity Tools Meet Systems of Record"
 subtitle: "Speed is a Vanity Metric: Moving from the Illusion of AI Adoption to the Reality of Defensible Architecture."
 date: 2026-05-25
-kind: "essay"
+kind: "professional"
 tags: ["AI implementation", "Third Party Risk", "Architecture", "Regulated environments"]
 draft: false
 ---
