@@ -5,7 +5,7 @@ import { writingKinds, type WritingKind } from '../../config';
 
 const all = await getCollection('writing', ({ data }) => !data.draft);
 const filtered = all
-  .filter((entry) => entry.data.kind === 'poems')
+  .filter((entry) => entry.data.kind === 'poem')
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
 const fmt = (d: Date) =>
