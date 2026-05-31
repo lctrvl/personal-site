@@ -1,7 +1,7 @@
 ---
 title: "On Choices"
 subtitle: "On the irreversibility of decision, the grace of consequence, and what it costs to live deliberately."
-date: 2026-05-28
+date: 2026-01-14
 kind: "personal"
 tags: ["Choices", "Stoicism", "Deliberate living"]
 draft: false
