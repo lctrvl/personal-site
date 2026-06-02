@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>UK & Paris Trip · June 3–14, 2026</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1f3a5f;
+    --navy-soft: #2d4a6f;
+    --terracotta: #c75d3a;
+    --terracotta-light: #e89478;
+    --cream: #faf6ef;
+    --cream-2: #f0e9dc;
+    --ink: #2a2a2a;
+    --muted: #6b6b6b;
+    --gold: #c8a04c;
+    --green: #4a7c5e;
+    --red: #b8453a;
+    --shadow: 0 2px 12px rgba(31,58,95,.08);
+    --shadow-lg: 0 8px 32px rgba(31,58,95,.12);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+  h1, h2, h3, h4 { font-family: 'Playfair Display', Georgia, serif; font-weight: 700; color: var(--navy); margin: 0 0 .5em; }
+  h1 { font-size: clamp(2rem, 5vw, 3.2rem); line-height: 1.1; letter-spacing: -.5px; }
+  h2 { font-size: clamp(1.5rem, 3vw, 2rem); }
+  h3 { font-size: 1.3rem; }
+  h4 { font-size: 1.05rem; font-family: 'Inter', sans-serif; font-weight: 700; color: var(--navy); }
+  a { color: var(--terracotta); }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
+    color: white;
+    padding: 4rem 1.5rem 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 20% 30%, rgba(199,93,58,.18), transparent 40%),
+                      radial-gradient(circle at 80% 70%, rgba(200,160,76,.15), transparent 45%);
+  }
+  .hero-inner { position: relative; max-width: 1100px; margin: 0 auto; }
+  .hero h1 { color: white; font-size: clamp(2.2rem, 5vw, 3.6rem); }
+  .hero-sub { font-size: 1.1rem; opacity: .85; margin-bottom: 2rem; }
+  .hero-stats { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin-top: 1.5rem; }
+  .hero-stat { text-align: center; }
+  .hero-stat .num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 800; color: var(--terracotta-light); }
+  .hero-stat .label { font-size: .8rem; opacity: .8; text-transform: uppercase; letter-spacing: 1.5px; }
+
+  /* Container */
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
+  section { padding: 3rem 0; }
+  .section-title { display: flex; align-items: center; gap: .8rem; margin-bottom: 1.5rem; }
+  .section-title .icon { font-size: 1.6rem; }
+
+  /* Map */
+  #trip-map {
+    height: 540px;
+    border-radius: 14px;
+    box-shadow: var(--shadow-lg);
+    border: 4px solid white;
+  }
+  .map-legend {
+    display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem; font-size: .9rem; color: var(--muted);
+  }
+  .legend-item { display: flex; align-items: center; gap: .5rem; }
+  .legend-dot {
+    width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 1px var(--navy);
+  }
+  .legend-dot.roadtrip { background: var(--terracotta); }
+  .legend-dot.london { background: var(--navy); }
+  .legend-dot.paris { background: var(--gold); }
+  .legend-line { width: 24px; height: 3px; background: var(--terracotta); }
+  .legend-line.dashed { background: repeating-linear-gradient(90deg, var(--gold) 0 6px, transparent 6px 10px); height: 3px; }
+
+  /* Pre-trip checklist */
+  .checklist {
+    background: white;
+    border-left: 5px solid var(--terracotta);
+    padding: 1.5rem 1.8rem;
+    border-radius: 0 12px 12px 0;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+  }
+  .checklist h3 { color: var(--terracotta); margin-bottom: .8rem; }
+  .checklist ul { margin: 0; padding-left: 1.2rem; }
+  .checklist li { margin-bottom: .4rem; }
+  .checklist .urgent { color: var(--red); font-weight: 600; }
+
+  /* Day cards */
+  .day-grid { display: grid; gap: 1.5rem; }
+  .day-card {
+    background: white;
+    border-radius: 14px;
+    padding: 0;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    border: 1px solid var(--cream-2);
+  }
+  .day-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background: var(--navy);
+    color: white;
+    padding: 1.2rem 1.6rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .day-header .day-num { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 800; line-height: 1; color: var(--terracotta-light); }
+  .day-header .day-meta { flex: 1; }
+  .day-header h3 { color: white; margin: 0 0 .3rem; }
+  .day-header .day-date { font-size: .9rem; opacity: .85; }
+  .day-header .drive-badge {
+    background: var(--terracotta);
+    padding: .3rem .8rem;
+    border-radius: 20px;
+    font-size: .8rem;
+    font-weight: 600;
+    white-space: nowrap;
+    align-self: center;
+  }
+  .day-body { padding: 1.6rem; }
+
+  .lodging-row {
+    background: var(--cream);
+    padding: 1rem 1.2rem;
+    border-radius: 8px;
+    margin-bottom: 1.2rem;
+    display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-start;
+    font-size: .95rem;
+  }
+  .lodging-row strong { color: var(--navy); }
+  .lodging-row .conf { font-size: .8rem; color: var(--muted); font-family: 'Inter', monospace; }
+
+  .day-section {
+    margin-top: 1.4rem;
+  }
+  .day-section h4 {
+    display: flex; align-items: center; gap: .5rem;
+    border-bottom: 2px solid var(--cream-2);
+    padding-bottom: .4rem;
+    margin-bottom: .6rem;
+  }
+  .day-section .ico { font-size: 1.1rem; }
+  .day-section ul { margin: 0; padding-left: 1.2rem; }
+  .day-section li { margin-bottom: .35rem; }
+  .tag {
+    display: inline-block;
+    font-size: .72rem;
+    padding: .15rem .5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-right: .3rem;
+  }
+  .tag.iconic { background: #fdecd0; color: #8b6321; }
+  .tag.gem { background: #d6e8dc; color: #2c5238; }
+  .tag.outdoor { background: #d8e6f3; color: #1f3a5f; }
+  .tag.eat { background: #f5d6c9; color: #7a3621; }
+
+  .reserve-box {
+    background: #fdf3ee;
+    border: 1px dashed var(--terracotta);
+    padding: .9rem 1.1rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+    font-size: .92rem;
+  }
+  .reserve-box strong { color: var(--terracotta); }
+
+  /* City stay (London/Paris) */
+  .city-stay { background: white; border-radius: 14px; box-shadow: var(--shadow); margin-bottom: 2rem; overflow: hidden; }
+  .city-header {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--terracotta) 180%);
+    color: white;
+    padding: 1.5rem 2rem;
+  }
+  .city-header.paris { background: linear-gradient(135deg, var(--gold) 0%, var(--terracotta) 100%); }
+  .city-header h2 { color: white; margin: 0 0 .3rem; }
+  .city-body { padding: 1.8rem 2rem; }
+  .city-day {
+    border-top: 1px solid var(--cream-2);
+    padding: 1.4rem 0;
+  }
+  .city-day:first-of-type { border-top: 0; padding-top: 0; }
+  .city-day h3 { display: flex; align-items: center; gap: .8rem; }
+  .city-day .pill {
+    background: var(--terracotta);
+    color: white;
+    font-size: .75rem;
+    padding: .2rem .6rem;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Reservations table */
+  .res-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow); }
+  .res-table th { background: var(--navy); color: white; padding: .9rem 1rem; text-align: left; font-weight: 600; font-size: .85rem; text-transform: uppercase; letter-spacing: .5px; }
+  .res-table td { padding: .85rem 1rem; border-bottom: 1px solid var(--cream-2); font-size: .92rem; vertical-align: top; }
+  .res-table tr:last-child td { border-bottom: 0; }
+  .res-table tr:nth-child(even) td { background: var(--cream); }
+  .res-table .conf-code { font-family: monospace; color: var(--muted); font-size: .8rem; }
+
+  /* Footer */
+  footer {
+    background: var(--navy);
+    color: white;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    margin-top: 3rem;
+    font-size: .9rem;
+    opacity: .9;
+  }
+  footer a { color: var(--terracotta-light); }
+
+  /* Custom Leaflet markers */
+  .day-marker {
+    background: var(--terracotta);
+    color: white;
+    border-radius: 50%;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px;
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,.3);
+  }
+  .day-marker.london { background: var(--navy); }
+  .day-marker.paris { background: var(--gold); }
+  .day-marker.gatwick { background: var(--ink); width: 28px; height: 28px; font-size: 11px; }
+  .scenic-marker {
+    background: white;
+    border: 3px solid var(--terracotta);
+    border-radius: 50%;
+    width: 14px; height: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.25);
+  }
+
+  .leaflet-popup-content-wrapper { border-radius: 10px; }
+  .leaflet-popup-content { font-family: 'Inter', sans-serif; margin: 12px 16px; }
+  .leaflet-popup-content strong { color: var(--navy); display: block; margin-bottom: 3px; font-size: 1rem; }
+  .leaflet-popup-content small { color: var(--muted); }
+
+  @media (max-width: 700px) {
+    section { padding: 2rem 0; }
+    #trip-map { height: 420px; }
+    .day-header { padding: 1rem 1.2rem; }
+    .day-body { padding: 1.2rem; }
+    .city-body { padding: 1.4rem; }
+  }
+
+  /* Attraction links — subtle, inline with bold text */
+  a.attraction {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px dotted rgba(199, 93, 58, 0.6);
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  a.attraction:hover {
+    color: var(--terracotta);
+    border-bottom-color: var(--terracotta);
+  }
+  a.attraction:visited { color: inherit; }
+  a.attraction:hover:visited { color: var(--terracotta); }
+
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-inner">
+    <div style="opacity:.7; font-size:.85rem; letter-spacing:3px; text-transform:uppercase; margin-bottom:1rem;">Summer 2026</div>
+    <h1>Southwest England Roadtrip<br>+ London &amp; Paris</h1>
+    <div class="hero-sub">Wednesday, June 3 — Sunday, June 14, 2026</div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">12</div><div class="label">Days</div></div>
+      <div class="hero-stat"><div class="num">5</div><div class="label">Roadtrip Stops</div></div>
+      <div class="hero-stat"><div class="num">~710</div><div class="label">km Scenic Driving</div></div>
+      <div class="hero-stat"><div class="num">3</div><div class="label">Countries' Capitals</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- MAP -->
+<section>
+  <div class="container">
+    <div class="section-title">
+      <span class="icon">🗺️</span>
+      <h2>The Whole Trip on One Map</h2>
+    </div>
+    <p style="color:var(--muted); margin-top:-.5rem; max-width:780px;">
+      The orange line traces your roadtrip from Gatwick through the South Downs, Bath, Cheddar Gorge, Wells, the Jurassic Coast, the Piddle Valley, and the New Forest. Numbered circles are the lodging stops; small open dots are the scenic en-route stops. Click any marker for details.
+    </p>
+    <div id="trip-map"></div>
+    <div class="map-legend">
+      <div class="legend-item"><span class="legend-dot roadtrip"></span>Roadtrip stops (Days 1–4)</div>
+      <div class="legend-item"><span class="legend-dot london"></span>London (Days 5–7)</div>
+      <div class="legend-item"><span class="legend-dot paris"></span>Paris (Days 8–11)</div>
+      <div class="legend-item"><span style="width:14px; height:14px; border-radius:50%; background:white; border:3px solid var(--terracotta);"></span>Scenic detours &amp; route stops</div>
+      <div class="legend-item"><span class="legend-line"></span>Driving route</div>
+      <div class="legend-item"><span class="legend-line dashed"></span>Eurostar (London → Paris)</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRE-TRIP CHECKLIST -->
+<section style="background:var(--cream-2); padding:2.5rem 0;">
+  <div class="container">
+    <div class="section-title">
+      <span class="icon">✅</span>
+      <h2>Reserve Ahead — Do This Before You Fly</h2>
+    </div>
+    <div class="checklist">
+      <h3>Time-sensitive bookings</h3>
+      <ul>
+        <li class="urgent">⚠️ <strong>Eurostar London → Paris (Jun 10)</strong> — not yet booked. Buy now: prices double in last 30 days. The 9–10 AM trains are usually best for arriving Paris by lunch. Book at <em>eurostar.com</em>.</li>
+        <li><strong>Roman Baths, Bath</strong> — book a timed-entry slot (early morning 9–10 AM avoids crowds and gives golden light on the stone).</li>
+        <li><strong>Thermae Bath Spa rooftop pool</strong> — the sunset session is the romantic move; sells out 1–2 weeks ahead in summer.</li>
+        <li><strong>Exeter Underground Passages tour</strong> — only 12 people per slot; book online.</li>
+        <li><strong>Dinner at The Brace of Pheasants (Jun 5)</strong> — call ahead. The pub is the only dinner option in Plush; rooms guests still need a table reservation.</li>
+        <li><strong><a href="https://www.hrp.org.uk/tower-of-london/" class="attraction" target="_blank" rel="noopener noreferrer">Tower of London</a></strong> (London) — buy the timed-entry "save 15% online" ticket; arrive at opening for the Crown Jewels before queues form.</li>
+        <li><strong><a href="https://www.westminster-abbey.org/" class="attraction" target="_blank" rel="noopener noreferrer">Westminster Abbey</a></strong> — verified-time entry needed for visitors; otherwise free Evensong at 5 PM is a beautiful workaround.</li>
+        <li><strong>Louvre, Paris</strong> — mandatory timed-entry ticket; the 9 AM slot beats the crowds.</li>
+        <li><strong>Eiffel Tower summit</strong> — book 2–3 weeks ahead for evening; sunset slots are gold.</li>
+        <li><strong>Versailles</strong> — if doing it as a day trip, book "Passport with timed entry" + RER C train tickets.</li>
+        <li><strong>Restaurants worth booking 2–3 weeks out:</strong> The Olive Tree (Bath), The Chesil Rectory (Winchester), St. John (London), Dishoom (any branch), Septime (Paris), Le Comptoir du Relais (Paris), Frenchie (Paris).</li>
+        <li><strong>Theater</strong> — if you want a West End show, book before you fly.</li>
+      </ul>
+    </div>
+    <div class="checklist" style="border-left-color: var(--green);">
+      <h3 style="color:var(--green);">Before you drive (June 3)</h3>
+      <ul>
+        <li>Confirm <strong>SIXT pickup</strong> (BMW 3 Series, ref <span style="font-family:monospace">see Notes app</span>) at <strong>Gatwick South Terminal, 8:00 AM</strong>. Bring your driver's license, passport, and the credit card used for booking. £500 security deposit blocked at pickup.</li>
+        <li>Buy a UK <strong>SIM/eSIM with data</strong> (or enable an international plan) — Cerne Abbas, Plush, and the Dorset lanes have spotty coverage.</li>
+        <li>Download <strong>Google Maps offline</strong> for southwest England.</li>
+        <li>Bring an <strong>EU plug adapter</strong> for Paris and a <strong>UK plug adapter</strong> for the UK leg (different shapes).</li>
+        <li>Consider an <strong>English Heritage Overseas Visitor Pass</strong> (9 or 16 days) if you'll visit more than 3 sites — Avebury, Maiden Castle, Hospital of St Cross, and the New Forest's Hurst Castle are all covered.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- DAY-BY-DAY ROADTRIP -->
+<section>
+  <div class="container">
+    <div class="section-title">
+      <span class="icon">🚗</span>
+      <h2>The Roadtrip — Days 1 to 5</h2>
+    </div>
+    <p style="color:var(--muted); margin-top:-.5rem; max-width:780px;">
+      Five lodging-to-lodging legs through the West Country, deliberately routed off the motorways and onto the spiritual roads of southern England — A272, B3135, A3052, B3157. Each day pairs the must-see, a hidden gem, an outdoors pick, and one classic local plate.
+    </p>
+
+    <div class="day-grid">
+
+      <!-- DAY 1 BATH -->
+      <article class="day-card">
+        <div class="day-header">
+          <div class="day-num">01</div>
+          <div class="day-meta">
+            <h3>Gatwick → Bath via the South Downs</h3>
+            <div class="day-date">Wed, Jun 3 → Thu, Jun 4 · 1 night · The Ancient Path</div>
+          </div>
+          <div class="drive-badge">🚗 ~280 km · ~4h 30min driving (scenic)</div>
+        </div>
+        <div class="day-body">
+          <div class="lodging-row">
+            <div style="flex:1; min-width:240px;">
+              <strong>Charlcombe Inn</strong><br>
+              Lansdown, Bath, BA1 9BT<br>
+              <span class="conf">Conf: see Notes app · Check-in 3 PM · Free breakfast</span>
+            </div>
+            <div style="font-size:.85rem; color:var(--muted);">
+              Lansdown sits on the hill north of Bath — quieter than the center, 10 min by car or 25 min downhill on foot.
+            </div>
+          </div>
+
+          <p style="margin-top:0;"><strong>The pro move: skip the M25/M4 corridor.</strong> Pick up the BMW at Gatwick at 8 AM and head south to the <strong>A272</strong> — the spiritual road of southern England, threading the South Downs through villages of yew, flint, and chalk. It's slow on purpose. The scenic route adds a couple of hours but the day's payoff is one big stop: <strong><a href="https://www.nationaltrust.org.uk/visit/wiltshire/avebury" class="attraction" target="_blank" rel="noopener noreferrer">Avebury</a></strong>.</p>
+
+          <div class="day-section">
+            <h4><span class="ico">🌾</span> En route</h4>
+            <ul>
+              <li><span class="tag iconic">The stop</span> <strong><a href="https://www.nationaltrust.org.uk/visit/wiltshire/avebury" class="attraction" target="_blank" rel="noopener noreferrer">Avebury</a></strong> — go here, <em>not</em> Stonehenge. Stonehenge is a fenced-off circus you view from a path; Avebury is the largest stone circle in Europe and you can <strong>walk amongst the stones</strong>. The <strong><a href="https://www.redlionavebury.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Red Lion</a></strong> pub sits literally inside the circle — pint, ploughman's lunch, allow 2–3 hours total.</li>
+            </ul>
+          </div>
+
+          <div class="day-section">
+            <h4><span class="ico">🏛️</span> In Bath</h4>
+            <p style="margin:.4rem 0 .8rem; padding:.6rem .9rem; background:#fff8ef; border-left:3px solid var(--gold); border-radius:0 6px 6px 0; font-size:.92rem;">
+              <strong>Park at the hotel and walk.</strong> Bath is a nightmare for cars — narrow Georgian streets, residents-only zones, and the few central garages run £20+ per day. The Charlcombe Inn has free parking; everything in town is 25 min downhill or a £8 taxi.
+            </p>
+            <ul>
+              <li><span class="tag iconic">Iconic</span> <strong><a href="https://www.romanbaths.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Roman Baths</a></strong> — book a timed slot. Audio tour included; allow 90 min. Don't skip the King's Bath terrace.</li>
+              <li><span class="tag iconic">Iconic</span> <strong><a href="https://no1royalcrescent.org.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Royal Crescent &amp; The Circus</a></strong> — the postcard Georgian terraces, free to admire. Pop into No. 1 Royal Crescent (the museum) if you have time.</li>
+              <li><span class="tag gem">Hidden gem</span> <strong><a href="https://beckfordstower.org.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Beckford's Tower</a></strong> — a quirky 1820s neo-classical tower a 10-min walk from your inn, with panoramic views.</li>
+              <li><span class="tag gem">Hidden gem</span> <strong><a href="https://www.nationaltrust.org.uk/visit/bath-bristol/prior-park-landscape-garden" class="attraction" target="_blank" rel="noopener noreferrer">Prior Park Landscape Garden</a></strong> (NT) — Palladian bridge, gentle valley walk, far less crowded than the Crescent.</li>
+              <li><span class="tag outdoor">Outdoors</span> <strong><a href="https://www.nationaltrust.org.uk/visit/bath-bristol/bath-skyline" class="attraction" target="_blank" rel="noopener noreferrer">Bath Skyline Walk</a></strong> (NT, 6 mi) — woodland paths above the city; brilliant late-afternoon light.</li>
+              <li><span class="tag iconic">Romance</span> <strong><a href="https://www.thermaebathspa.com/" class="attraction" target="_blank" rel="noopener noreferrer">Thermae Bath Spa</a></strong> — modern thermal pool with rooftop overlooking the abbey. Book the evening session.</li>
+            </ul>
+          </div>
+
+          <div class="day-section">
+            <h4><span class="ico">🍽️</span> Where to eat</h4>
+            <ul>
+              <li><span class="tag eat">Tonight</span> <strong><a href="https://thescallopshell.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">The Scallop Shell</a></strong> — the best fish and chips in the region. No frills, near the river. Exactly what you want after the long drive.</li>
+              <li><span class="tag eat">Lunch</span> <strong><a href="https://www.sallylunns.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Sally Lunn's Buns</a></strong> — historic eating-house (1680s), home of the original Sally Lunn bun.</li>
+              <li><span class="tag eat">Splurge alt.</span> <strong><a href="https://olivetreebath.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">The Olive Tree</a></strong> (Michelin-starred, modern British) — book 2 weeks ahead.</li>
+              <li><span class="tag eat">Casual alt.</span> <strong><a href="https://www.marlborough-tavern.com/" class="attraction" target="_blank" rel="noopener noreferrer">The Marlborough Tavern</a></strong> — the gastropub locals send visitors to.</li>
+            </ul>
+          </div>
+
+          <div class="reserve-box">
+            <strong>Reserve ahead for today:</strong> Roman Baths timed entry · Thermae Bath Spa session · Scallop Shell (walk-ins possible but expect a wait at 7 PM) · Olive Tree if swapping it in.
+          </div>
+        </div>
+      </article>
+
+      <!-- DAY 2 EXETER -->
+      <article class="day-card">
+        <div class="day-header">
+          <div class="day-num">02</div>
+          <div class="day-meta">
+            <h3>Bath → Exeter via Cheddar &amp; Wells</h3>
+            <div class="day-date">Thu, Jun 4 → Fri, Jun 5 · 1 night · Gorges &amp; Cathedrals</div>
+          </div>
+          <div class="drive-badge">🚗 ~180 km · ~3h 45min driving (scenic)</div>
+        </div>
+        <div class="day-body">
+          <div class="lodging-row">
+            <div style="flex:1; min-width:240px;">
+              <strong>Hotel Du Vin Exeter</strong><br>
+              Magdalen Street, Exeter, EX2 4HY<br>
+              <span class="conf">Conf: see Notes app · Non-refundable · Check-in 3 PM</span>
+            </div>
+            <div style="font-size:.85rem; color:var(--muted);">
+              Walking distance to the cathedral and the Quayside. The bistro has a strong wine list — worth a glass even if you eat elsewhere.
+            </div>
+          </div>
+
+          <p style="margin-top:0;">Three set-piece stops on the drive. Take the <strong>B3135 through Cheddar Gorge</strong> — limestone hairpins climbing out of England's deepest natural canyon, walls 137m on either side. Drop into <strong><a href="https://www.wellscathedral.org.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Wells</a></strong> for the cathedral's scissor arches. Then the <strong>A39 along the edge of the Quantock Hills</strong> for the run into Devon. <strong>Skip Glastonbury</strong> unless you want crystals and tie-dye — the surrounding countryside is far more rewarding.</p>
+
+          <div class="day-section">
+            <h4><span class="ico">🌾</span> En route</h4>
+            <ul>
+              <li><span class="tag iconic">Drive</span> <strong><a href="https://www.cheddargorge.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Cheddar Gorge (B3135)</a></strong> — the hairpins are spectacular. Pull over at the top viewpoint. The Cheddar Gorge cheese cave is the only place in the world that still ages cheddar in the gorge itself; pop in for a tasting.</li>
+              <li><span class="tag iconic">Stop</span> <strong><a href="https://www.wellscathedral.org.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Wells</a></strong> — the smallest city in England. The cathedral's <strong>scissor arches</strong> (added in 1338 to stop the central tower collapsing) are a structural marvel like nothing else in Europe. Allow 60–90 min.</li>
+              <li><span class="tag gem">Scenic</span> <strong>A39 along the Quantocks</strong> — bracken, wild ponies, sea glimpses on your right. Coleridge wrote <em>Kubla Khan</em> in a farmhouse just off this road.</li>
+            </ul>
+          </div>
+
+          <div class="day-section">
+            <h4><span class="ico">🏛️</span> In Exeter</h4>
+            <ul>
+              <li><span class="tag iconic">Iconic</span> <strong><a href="https://www.exeter-cathedral.org.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Exeter Cathedral</a></strong> — the longest unbroken medieval vaulted ceiling in the world. Book the rooftop tour.</li>
+              <li><span class="tag iconic">Iconic</span> <strong><a href="https://www.exeter.gov.uk/visiting/exeters-underground-passages/" class="attraction" target="_blank" rel="noopener noreferrer">Underground Passages</a></strong> — guided tour of medieval water-supply tunnels under the city. 45 min, properly atmospheric.</li>
+              <li><span class="tag gem">Hidden gem</span> <strong><a href="https://exetermemories.co.uk/em/_streets/stepcotehill.php" class="attraction" target="_blank" rel="noopener noreferrer">Stepcote Hill</a></strong> — the medieval cobbled entrance to the city, used since Saxon times. Walk down it on the way to the Quay; you'll feel the centuries underfoot.</li>
+              <li><span class="tag gem">Hidden gem</span> <strong><a href="https://www.visittopsham.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Topsham village</a></strong> — 5 mi south, riverside Georgian houses, antique shops, four pubs along a single quay.</li>
+              <li><span class="tag outdoor">Outdoors</span> <strong><a href="https://www.exe-estuary.org/visiting-the-estuary/exe-estuary-trail/" class="attraction" target="_blank" rel="noopener noreferrer">Exe Estuary Trail</a></strong> — flat path along the water from Exeter Quay; bike rentals at Saddles &amp; Paddles.</li>
+            </ul>
+          </div>
+
+          <div class="day-section">
+            <h4><span class="ico">🍽️</span> Where to eat</h4>
+            <ul>
+              <li><span class="tag eat">Devon classic</span> <strong>Cream tea</strong> at any tearoom — scones with clotted cream and jam. The Devon way is cream first, then jam (vs. Cornwall's jam-first).</li>
+              <li><span class="tag eat">Dinner</span> <strong><a href="https://rustybikeexeter.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Rusty Bike</a></strong> — gastropub, local meat from their own farm. 10-min walk from the cathedral.</li>
+              <li><span class="tag eat">Casual</span> <strong><a href="https://www.thefishshed-topsham.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">The Fish Shed</a></strong> at Topsham — paper-wrapped fish &amp; chips eaten by the river.</li>
+              <li><span class="tag eat">Splurge</span> <strong><a href="https://lympstonemanor.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Lympstone Manor</a></strong> (Michelin) — 20 min south, Michael Caines' country house.</li>
+            </ul>
+          </div>
+
+          <div class="reserve-box">
+            <strong>Reserve ahead for today:</strong> Underground Passages tour · Cathedral rooftop tour · Lympstone Manor if doing the splurge.
+          </div>
+        </div>
+      </article>
+
+      <!-- DAY 3 DORSET -->
+      <article class="day-card">
+        <div class="day-header">
+          <div class="day-num">03</div>
+          <div class="day-meta">
+            <h3>Exeter → Plush via the Jurassic Coast</h3>
+            <div class="day-date">Fri, Jun 5 → Sat, Jun 6 · 1 night · The Jurassic Backroads</div>
+          </div>
+          <div class="drive-badge">🚗 ~140 km · ~3h 30min driving (coastal)</div>
+        </div>
+        <div class="day-body">
+          <div class="lodging-row">
+            <div style="flex:1; min-width:240px;">
+              <strong><a href="https://www.thebraceofpheasants.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">The Brace of Pheasants</a></strong><br>
+              Plush, Dorchester, DT2 7RQ<br>
+              <span class="conf">Conf: see Notes app · Free breakfast · Check-in 4 PM</span>
+            </div>
+            <div style="font-size:.85rem; color:var(--muted);">
+              Plush sits deep in the <strong>Piddle Valley</strong> — a hamlet of about 60 people. The inn is the village. Phone signal is patchy.
+            </div>
+          </div>
+
+          <p style="margin-top:0;">Take the <strong>A3052</strong> coastal road — narrow, slow, sea views to the south. Two perfect stops, then a finale on what's arguably the best coastal drive in England.</p>
+
+          <p style="padding:.7rem 1rem; background:#fff8ef; border-left:3px solid var(--gold); border-radius:0 6px 6px 0; font-size:.92rem; margin:.8rem 0;">
+            <strong>The Piddle Valley warning.</strong> The last 30 minutes into Plush are <strong>single-track lanes between hedges taller than the car</strong>. Look for the white "passing places" signs — pull into the next one when you see oncoming traffic. Don't reverse down a hill if you can avoid it. Take it slow, you'll be fine.
+          </p>
+
+          <div class="day-section">
+            <h4><span class="ico">🌊</span> En route</h4>
+            <ul>
+              <li><span class="tag gem">Stop 1</span> <strong><a href="https://visitbeer.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Beer</a></strong> — a tiny fishing village in a limestone gap (named for the Anglo-Saxon for grove, no relation to the drink). Get a <strong>crab sandwich on the beach</strong> — the boats land their catch right onto the pebbles.</li>
+              <li><span class="tag iconic">Stop 2</span> <strong><a href="https://www.lymeregis.org/" class="attraction" target="_blank" rel="noopener noreferrer">Lyme Regis</a></strong> — fossil hunting on the beach (you'll find ammonites; pick up a hammer and bag for £3 from the harbour shop). Walk the <strong><a href="https://www.lymeregis.org/the-cobb" class="attraction" target="_blank" rel="noopener noreferrer">Cobb</a></strong>, the curving harbour wall famous from <em>Persuasion</em> and <em>The French Lieutenant's Woman</em>.</li>
+              <li><span class="tag iconic">Drive</span> <strong><a href="https://jurassiccoast.org/visit/" class="attraction" target="_blank" rel="noopener noreferrer">B3157, Bridport → Weymouth</a></strong> — arguably the best coastal views in England. <strong>Chesil Beach</strong> below you, the long pebble bar curving 18 miles to Portland. Pull over at Burton Bradstock or Abbotsbury.</li>
+            </ul>
+          </div>
+
+          <div class="day-section">
+            <h4><span class="ico">🏛️</span> Around Plush</h4>
+            <ul>
+              <li><span class="tag iconic">Iconic</span> <strong><a href="https://www.nationaltrust.org.uk/visit/dorset/cerne-giant" class="attraction" target="_blank" rel="noopener noreferrer">Cerne Abbas Giant</a></strong> — the 55m chalk figure on the hillside, 6 km from your bed. Best viewpoint is the marked layby on the A352 just north of the village.</li>
+              <li><span class="tag gem">Hidden gem</span> <strong><a href="https://www.cerneabbas.org.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Cerne Abbas village</a></strong> — Tudor cottages, abbey ruins, a tiny pond. The Royal Oak is a 14th-c. coaching inn for a pint.</li>
+              <li><span class="tag gem">Hidden gem</span> <strong><a href="https://www.nationaltrust.org.uk/visit/dorset/hardys-cottage" class="attraction" target="_blank" rel="noopener noreferrer">Hardy's Cottage</a></strong> (NT) — Thomas Hardy's birthplace, a thatched cob building in the woods. Closes 5 PM.</li>
+              <li><span class="tag outdoor">Outdoors</span> <strong>Plush ridge walk</strong> — a 4-mile circular straight from the inn's door, over Plush Hill with valley views.</li>
+            </ul>
+          </div>
+
+          <div class="day-section">
+            <h4><span class="ico">🍽️</span> Where to eat</h4>
+            <ul>
+              <li><span class="tag eat">Lunch en route</span> <strong>Crab sandwich on Beer beach</strong> — you'll smell the boats before you see them.</li>
+              <li><span class="tag eat">Tonight</span> <strong><a href="https://www.thebraceofpheasants.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">The Brace of Pheasants</a></strong> itself — book a table even though you're staying upstairs. Roast Dorset lamb, fresh-caught crab, proper game pie.</li>
+              <li><span class="tag eat">Dorset classic</span> <strong>Dorset apple cake</strong> with clotted cream — order it for dessert.</li>
+            </ul>
+          </div>
+
+          <div class="reserve-box">
+            <strong>Reserve ahead for today:</strong> Dinner table at Brace of Pheasants — single most important reservation of the roadtrip. Phone the inn directly: there's no real alternative within a 20-min drive.
+          </div>
+        </div>
+      </article>
+
+      <!-- DAY 4 WINCHESTER -->
+      <article class="day-card">
+        <div class="day-header">
+          <div class="day-num">04</div>
+          <div class="day-meta">
+            <h3>Plush → Winchester via the New Forest</h3>
+            <div class="day-date">Sat, Jun 6 → Sun, Jun 7 · 1 night · Hill Forts &amp; Holy Sites</div>
+          </div>
+          <div class="drive-badge">🚗 ~110 km · ~2h 30min driving</div>
+        </div>
+        <div class="day-body">
+          <div class="lodging-row">
+            <div style="flex:1; min-width:240px;">
+              <strong>Kyoto Rooms</strong><br>
+              Bridge St, Winchester, SO23 0HN<br>
+              <span class="conf">Conf: see Notes app · Non-refundable · Front desk closes 5:30 PM</span>
+            </div>
+            <div style="font-size:.85rem; color:var(--muted);">
+              ⚠️ Front desk only open 2:30–5:30 PM. If you'll arrive later, message the property the day before with your ETA.
+            </div>
+          </div>
+
+          <p style="margin-top:0;"><strong>Set an alarm.</strong> Hike <strong>Maiden Castle at dawn</strong> — Europe's largest Iron Age hillfort, 15 minutes from Plush. The morning mist on the ramparts is properly haunting and you'll likely have it to yourself. Then drive east through the <strong>New Forest via Beaulieu</strong> (pronounced "Bewlee"), an ancient royal hunting ground. <strong>Watch for wild ponies on the road</strong> — they have the right of way and they know it.</p>
+
+          <div class="day-section">
+            <h4><span class="ico">🌅</span> En route</h4>
+            <ul>
+              <li><span class="tag outdoor">Dawn</span> <strong><a href="https://www.english-heritage.org.uk/visit/places/maiden-castle/" class="attraction" target="_blank" rel="noopener noreferrer">Maiden Castle</a></strong> — the largest Iron Age hill fort in Europe, just south of Dorchester. Free, dramatic, often empty at first light. Allow an hour to walk the inner ramparts.</li>
+              <li><span class="tag gem">Drive</span> <strong><a href="https://www.beaulieu.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">The New Forest via Beaulieu</a></strong> — semi-wild ponies and donkeys grazing alongside the road; speed limit 40 mph for animal welfare. Stop at Beaulieu village (and the National Motor Museum if you're a car person).</li>
+            </ul>
+          </div>
+
+          <div class="day-section">
+            <h4><span class="ico">🏛️</span> In Winchester</h4>
+            <ul>
+              <li><span class="tag iconic">Iconic</span> <strong><a href="https://www.hants.gov.uk/thingstodo/greathall" class="attraction" target="_blank" rel="noopener noreferrer">The Great Hall</a></strong> — see "<strong>King Arthur's Round Table</strong>" hanging on the wall. (It's a 13th-c. medieval recreation, but still fantastic.) Free entry.</li>
+              <li><span class="tag iconic">Iconic</span> <strong><a href="https://www.winchester-cathedral.org.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Winchester Cathedral</a></strong> — Jane Austen is buried in the north aisle. Free Evensong at 5:30 PM is the unmissable move.</li>
+              <li><span class="tag outdoor">Outdoors</span> <strong>Keats' Walk to St Cross</strong> — Keats wrote <em>To Autumn</em> walking this exact path along the water meadows. End at the <strong><a href="https://www.hospitalofstcross.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Hospital of St Cross</a></strong> (England's oldest charitable institution) and ask for the "<strong>Wayfarer's Dole</strong>" at the porter's gate: bread and ale, a tradition since 1136.</li>
+              <li><span class="tag gem">Hidden gem</span> <strong><a href="https://www.english-heritage.org.uk/visit/places/wolvesey-castle/" class="attraction" target="_blank" rel="noopener noreferrer">Wolvesey Castle ruins</a></strong> — free, atmospheric, nearly always empty.</li>
+              <li><span class="tag outdoor">Outdoors</span> <strong><a href="https://www.hiwwt.org.uk/nature-reserves/st-catherines-hill" class="attraction" target="_blank" rel="noopener noreferrer">St Catherine's Hill</a></strong> — short uphill to a turf maze with the best view of Winchester.</li>
+            </ul>
+          </div>
+
+          <div class="day-section">
+            <h4><span class="ico">🍽️</span> Where to eat</h4>
+            <ul>
+              <li><span class="tag eat">Splurge</span> <strong><a href="https://chesilrectory.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">The Chesil Rectory</a></strong> — the oldest surviving house in Winchester (1450), modern British menu. Book 2 weeks ahead.</li>
+              <li><span class="tag eat">Classic</span> <strong><a href="https://www.wykehamarmswinchester.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">The Wykeham Arms</a></strong> — wonky old pub, schoolboy desks for tables, near the cathedral. Properly local.</li>
+              <li><span class="tag eat">Lunch</span> <strong><a href="https://theblackrat.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">The Black Rat</a></strong> (Michelin) — for a quiet two-person tasting menu.</li>
+              <li><span class="tag eat">Picnic</span> Sandwich from the Saturday farmers' market, eat in the water meadows at the end of Keats' Walk.</li>
+            </ul>
+          </div>
+
+          <div class="reserve-box">
+            <strong>Reserve ahead for today:</strong> The Chesil Rectory dinner · Cathedral tower tour. (Round Table, Wolvesey, St Cross, Maiden Castle are all walk-up / free.)
+          </div>
+        </div>
+      </article>
+
+      <!-- DAY 5 LONDON -->
+      <article class="day-card">
+        <div class="day-header">
+          <div class="day-num">05</div>
+          <div class="day-meta">
+            <h3>Winchester → Gatwick → London</h3>
+            <div class="day-date">Sun, Jun 7 · transfer day</div>
+          </div>
+          <div class="drive-badge">🚗 ~115 km to Gatwick · 1h 45min · Return car by 5 PM</div>
+        </div>
+        <div class="day-body">
+          <p style="margin-top:0; padding:1rem; background:#fff8ef; border-left:4px solid var(--gold); border-radius:0 8px 8px 0;">
+            <strong>The day with most logistics.</strong> SIXT closes the deal on the BMW at <strong>Gatwick by 17:00</strong>. From Gatwick, take the <strong>Gatwick Express</strong> (30 min, every 15 min) to Victoria, then the District line to Hammersmith (~25 min). Total transit: about 75 minutes from car return to checking into the Premier Inn.
+          </p>
+
+          <div class="day-section">
+            <h4><span class="ico">🚆</span> Suggested timing</h4>
+            <ul>
+              <li><strong>9:00 AM</strong> — relaxed Winchester morning. Coffee at the cathedral close, walk to the water meadows.</li>
+              <li><strong>11:00 AM</strong> — drive Winchester → Gatwick (1h 45min via M3/M25).</li>
+              <li><strong>1:00 PM</strong> — return car at Gatwick (well before the 5 PM deadline; gives a buffer).</li>
+              <li><strong>2:00 PM</strong> — Gatwick Express to Victoria (£23 standard, cheaper online).</li>
+              <li><strong>3:30 PM</strong> — check into Premier Inn Hammersmith.</li>
+              <li><strong>Evening</strong> — see the London section below.</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- LONDON STAY -->
+<section style="background:var(--cream-2); padding:3rem 0;">
+  <div class="container">
+    <div class="city-stay">
+      <div class="city-header">
+        <div style="font-size:.85rem; opacity:.85; letter-spacing:2px; text-transform:uppercase;">Days 5 — 7 · Three nights</div>
+        <h2>London</h2>
+        <div style="opacity:.9;">Premier Inn Hammersmith · 181 Talgarth Road · W6 8DN · Conf: see Notes app</div>
+      </div>
+      <div class="city-body">
+
+        <p><strong>Hammersmith is a quiet, leafy base with riverside pubs and excellent tube connections</strong> — Piccadilly line goes direct to Covent Garden in 20 min, District line to Westminster in 25 min. The Thames Path runs right past the hotel.</p>
+
+        <div class="city-day">
+          <h3><span class="pill">Day 5 · Sun, Jun 7</span> Arrival evening</h3>
+          <p style="margin-top:0;">Low-key after the drive and the trains. Walk 12 minutes south from the hotel to <strong>Hammersmith Bridge</strong> and follow the Thames Path west to <strong><a href="https://www.dovehammersmith.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">The Dove</a></strong> — a 17th-century riverside pub where Charles II is said to have entertained Nell Gwynn. Have dinner at the river. If you want a bit more energy, hop the District line one stop to <strong>Ravenscourt Park</strong> and the gastropub <strong><a href="https://www.angleseaarmspub.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">The Anglesea Arms</a></strong>.</p>
+          <div class="reserve-box"><strong>Tonight:</strong> book a Thames-side table at The Dove or River Café for sunset.</div>
+        </div>
+
+        <div class="city-day">
+          <h3><span class="pill">Day 6 · Mon, Jun 8</span> The Greatest Hits</h3>
+          <ul>
+            <li><span class="tag iconic">Morning</span> <strong><a href="https://www.britishmuseum.org/" class="attraction" target="_blank" rel="noopener noreferrer">British Museum</a></strong> (free) — opens 10 AM, focus on the Rosetta Stone, the Parthenon Marbles, and the Egyptian galleries. 2.5 hrs is plenty.</li>
+            <li><span class="tag iconic">Lunch</span> <strong><a href="https://www.dishoom.com/covent-garden/" class="attraction" target="_blank" rel="noopener noreferrer">Dishoom Covent Garden</a></strong> — book the bacon naan for breakfast or the lamb raan for lunch.</li>
+            <li><span class="tag iconic">Afternoon</span> <strong>Westminster walk</strong> — Westminster Abbey (book or do free 5 PM Evensong), Big Ben, Parliament Square, walk across the Thames to the South Bank.</li>
+            <li><span class="tag outdoor">Outdoors</span> <strong>South Bank stroll</strong> — Tate Modern (free), the Globe, Borough Market (closes 5 PM), Tower Bridge.</li>
+            <li><span class="tag eat">Dinner</span> <strong><a href="https://stjohnrestaurant.com/" class="attraction" target="_blank" rel="noopener noreferrer">St. John Smithfield</a></strong> — Fergus Henderson's nose-to-tail temple, the menu the world copied. Or <strong><a href="https://www.padella.co/" class="attraction" target="_blank" rel="noopener noreferrer">Padella</a></strong> for a 35-min queue and £10 hand-rolled pasta.</li>
+          </ul>
+        </div>
+
+        <div class="city-day">
+          <h3><span class="pill">Day 7 · Tue, Jun 9</span> Off the Beaten Path</h3>
+          <ul>
+            <li><span class="tag gem">Morning</span> <strong><a href="https://www.english-heritage.org.uk/visit/places/kenwood/" class="attraction" target="_blank" rel="noopener noreferrer">Hampstead Heath + Kenwood House</a></strong> — wild parkland, the swimming ponds, and Kenwood (free, with Vermeer and Rembrandt). End in <strong>Highgate Village</strong> for coffee.</li>
+            <li><span class="tag gem">Lunch</span> <strong><a href="https://www.maltby.st/" class="attraction" target="_blank" rel="noopener noreferrer">Maltby Street Market</a></strong> (Sat/Sun only — if you're here Tue, swap for <strong><a href="https://boroughmarket.org.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Borough Market</a></strong> or <strong><a href="https://www.bricklanelondon.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Brick Lane</a></strong> Sunday). For a Tuesday: head to <strong><a href="https://www.coaldropsyard.com/" class="attraction" target="_blank" rel="noopener noreferrer">Coal Drops Yard</a></strong> in King's Cross, eat at <strong><a href="https://caravanrestaurants.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Caravan</a></strong>.</li>
+            <li><span class="tag gem">Afternoon</span> <strong><a href="https://www.soane.org/" class="attraction" target="_blank" rel="noopener noreferrer">Sir John Soane's Museum</a></strong> (free) — the architect's house preserved exactly as he left it, stuffed with sarcophagi. Tiny, magical.</li>
+            <li><span class="tag outdoor">Late afternoon</span> Stroll <strong><a href="https://www.visitlondon.com/things-to-do/place/372037-notting-hill" class="attraction" target="_blank" rel="noopener noreferrer">Notting Hill</a></strong> — Portobello Road antiques, pastel houses, mews streets.</li>
+            <li><span class="tag eat">Dinner</span> <strong><a href="https://theledbury.com/" class="attraction" target="_blank" rel="noopener noreferrer">The Ledbury</a></strong> (Notting Hill, 3-star Michelin if splurging) or <strong><a href="https://trinityrestaurant.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">Trinity</a></strong> in Clapham.</li>
+          </ul>
+          <div class="reserve-box"><strong>Reserve ahead:</strong> Tower of London timed entry · West End theater (book the same week if you want a specific show) · St. John Smithfield · The Ledbury (book a month ahead).</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PARIS STAY -->
+<section>
+  <div class="container">
+    <div class="city-stay">
+      <div class="city-header paris">
+        <div style="font-size:.85rem; opacity:.85; letter-spacing:2px; text-transform:uppercase;">Days 8 — 11 · Four nights</div>
+        <h2>Paris</h2>
+        <div style="opacity:.9;">Hotel Des Arts Paris Montmartre · 5 Rue Tholoze · 75018 · Conf: see Notes app</div>
+      </div>
+      <div class="city-body">
+
+        <p><strong>Montmartre is the romantic Paris of cliché, and it earns it</strong> — narrow stairs, Rue Tholoze climbs to the Moulin de la Galette, Sacré-Cœur is a 6-min walk uphill. Mornings are quiet; afternoons get crowded with tour groups around the basilica. Plan early starts and slow evenings.</p>
+
+        <div class="city-day">
+          <h3><span class="pill">Day 8 · Wed, Jun 10</span> Arrival in Montmartre</h3>
+          <p style="margin-top:0;"><strong>Eurostar London → Paris</strong> from St Pancras International (~2h20). Aim for a 9–10 AM departure — you'll be checked into the hotel by mid-afternoon. From Gare du Nord, take Métro line 2 to Anvers, then walk up (or skip the stairs by taking the funicular).</p>
+          <ul>
+            <li><span class="tag iconic">Late afternoon</span> <strong><a href="https://www.sacre-coeur-montmartre.com/english/" class="attraction" target="_blank" rel="noopener noreferrer">Sacré-Cœur</a></strong> — climb to the steps for sunset over the city. Free, but the dome (€8) gives 360° views.</li>
+            <li><span class="tag gem">Evening</span> <strong><a href="https://en.parisinfo.com/paris-museum-monument/71292/Place-du-Tertre" class="attraction" target="_blank" rel="noopener noreferrer">Place du Tertre</a></strong> by night (after the painters pack up), then a glass at <strong>Le Consulat</strong> on the corner.</li>
+            <li><span class="tag eat">Dinner</span> <strong><a href="https://www.lecoqrico.com/en/" class="attraction" target="_blank" rel="noopener noreferrer">Le Coq Rico</a></strong> — Antoine Westermann's poultry-only restaurant, two blocks from your hotel. Or the cosier <strong><a href="https://www.bouillonpigalle.com/" class="attraction" target="_blank" rel="noopener noreferrer">Le Bouillon Pigalle</a></strong> — classic French at €15-a-plate prices.</li>
+          </ul>
+        </div>
+
+        <div class="city-day">
+          <h3><span class="pill">Day 9 · Thu, Jun 11</span> Right Bank Classics</h3>
+          <ul>
+            <li><span class="tag iconic">Morning</span> <strong><a href="https://www.louvre.fr/en" class="attraction" target="_blank" rel="noopener noreferrer">Louvre</a></strong> at 9 AM — book the timed entry. Go straight to the Mona Lisa first, then circle back to the Venus de Milo, Winged Victory, and the Egyptian wing. 3 hours max.</li>
+            <li><span class="tag outdoor">Lunch &amp; walk</span> Walk through the <strong><a href="https://www.louvre.fr/en/visit/hours-admission/the-tuileries-garden" class="attraction" target="_blank" rel="noopener noreferrer">Tuileries</a></strong> to <strong><a href="https://en.parisinfo.com/paris-museum-monument/71299/Place-de-la-Concorde" class="attraction" target="_blank" rel="noopener noreferrer">Place de la Concorde</a></strong>, then up the Champs-Élysées to the <strong><a href="https://www.paris-arc-de-triomphe.fr/en/" class="attraction" target="_blank" rel="noopener noreferrer">Arc de Triomphe</a></strong> (climb it for less crowded views than the tower).</li>
+            <li><span class="tag iconic">Afternoon</span> <strong><a href="https://www.sainte-chapelle.fr/en" class="attraction" target="_blank" rel="noopener noreferrer">Sainte-Chapelle</a></strong> — the medieval stained-glass chapel on Île de la Cité, smaller and more spectacular than Notre-Dame's exterior (which you can admire from outside while reconstruction continues).</li>
+            <li><span class="tag eat">Aperitif</span> A glass at <strong><a href="https://www.hotel-paris-relais-saint-germain.com/comptoir-du-relais" class="attraction" target="_blank" rel="noopener noreferrer">Le Comptoir du Relais</a></strong> (St-Germain) before dinner. The bistro's tasting dinners are booked months out, but the lunch and bar menu are walk-in.</li>
+            <li><span class="tag eat">Dinner</span> <strong><a href="https://www.hotel-paris-relais-saint-germain.com/comptoir-du-relais" class="attraction" target="_blank" rel="noopener noreferrer">Le Comptoir</a></strong> (if you scored a reservation), <strong><a href="https://www.bouillon-chartier.com/en/" class="attraction" target="_blank" rel="noopener noreferrer">Bouillon Chartier</a></strong> for the budget classic, or <strong><a href="https://www.septime-charonne.fr/" class="attraction" target="_blank" rel="noopener noreferrer">Septime</a></strong> (11th, two stars, book 3 weeks out at exactly noon Paris time).</li>
+          </ul>
+        </div>
+
+        <div class="city-day">
+          <h3><span class="pill">Day 10 · Fri, Jun 12</span> Marais &amp; the East</h3>
+          <ul>
+            <li><span class="tag gem">Morning</span> Wander the <strong><a href="https://en.parisinfo.com/discovering-paris/themed-guides/paris-by-area/le-marais" class="attraction" target="_blank" rel="noopener noreferrer">Marais</a></strong> — Place des Vosges (the oldest planned square in Paris), the Picasso Museum, narrow medieval streets.</li>
+            <li><span class="tag eat">Lunch</span> <strong><a href="https://www.lasdufallafel.com/" class="attraction" target="_blank" rel="noopener noreferrer">L'As du Fallafel</a></strong> on Rue des Rosiers — eat it standing up.</li>
+            <li><span class="tag gem">Afternoon</span> <strong><a href="https://pere-lachaise.com/" class="attraction" target="_blank" rel="noopener noreferrer">Père Lachaise Cemetery</a></strong> — Oscar Wilde, Jim Morrison, Chopin, Édith Piaf. Pick up a map at the entrance.</li>
+            <li><span class="tag gem">Late afternoon</span> Walk down <strong><a href="https://en.parisinfo.com/discovering-paris/themed-guides/paris-by-area/canal-saint-martin" class="attraction" target="_blank" rel="noopener noreferrer">Canal Saint-Martin</a></strong> with a glass of wine from a bar à vin, sit on the iron footbridges. Or up to <strong><a href="https://en.parisinfo.com/discovering-paris/themed-guides/paris-by-area/belleville" class="attraction" target="_blank" rel="noopener noreferrer">Belleville</a></strong> for the best view of the city without the Montmartre crowds.</li>
+            <li><span class="tag eat">Dinner</span> <strong><a href="https://www.frenchie-restaurant.com/" class="attraction" target="_blank" rel="noopener noreferrer">Frenchie</a></strong> (book months ahead) or its walk-in sibling <strong><a href="https://www.frenchie-restaurant.com/frenchie-bar-a-vins/" class="attraction" target="_blank" rel="noopener noreferrer">Frenchie Bar à Vins</a></strong> across the alley.</li>
+          </ul>
+        </div>
+
+        <div class="city-day">
+          <h3><span class="pill">Day 11 · Sat, Jun 13</span> Versailles or Left Bank</h3>
+          <p style="margin-top:0;"><strong>Choose one</strong> — both are great, neither fits in the same day comfortably.</p>
+          <ul>
+            <li><span class="tag iconic">Option A · Versailles</span> RER C from Champ de Mars, ~40 min. Book the <strong>Passport with timed entry</strong>. Be there at opening (9 AM); do the State Apartments first, then the gardens. The fountain show runs Saturdays in June (€11 extra). Back in Paris by 5 PM.</li>
+            <li><span class="tag gem">Option B · Slow Left Bank</span> <strong><a href="https://www.musee-orsay.fr/en" class="attraction" target="_blank" rel="noopener noreferrer">Musée d'Orsay</a></strong> (Impressionists; smaller and friendlier than the Louvre) → walk through <strong>St-Germain</strong> → <strong><a href="https://en.parisinfo.com/paris-museum-monument/71218/Jardin-du-Luxembourg" class="attraction" target="_blank" rel="noopener noreferrer">Luxembourg Gardens</a></strong> picnic → <strong><a href="https://shakespeareandcompany.com/" class="attraction" target="_blank" rel="noopener noreferrer">Shakespeare &amp; Company</a></strong> bookshop on the Seine → <strong>Eiffel Tower at sunset</strong> from <strong><a href="https://en.parisinfo.com/paris-museum-monument/71278/Place-du-Trocadero" class="attraction" target="_blank" rel="noopener noreferrer">Trocadéro</a></strong> (the picture spot) or up the tower itself.</li>
+            <li><span class="tag eat">Last dinner</span> <strong><a href="https://www.lamaisonrose-montmartre.com/" class="attraction" target="_blank" rel="noopener noreferrer">La Maison Rose</a></strong> in Montmartre (the pink corner restaurant Utrillo painted) for atmosphere, or <strong><a href="https://www.clamato-charonne.fr/" class="attraction" target="_blank" rel="noopener noreferrer">Clamato</a></strong> (11th) for seafood-leaning small plates.</li>
+          </ul>
+          <div class="reserve-box"><strong>Reserve ahead:</strong> Eurostar (urgently) · Louvre 9 AM slot · Eiffel summit (sunset) · Versailles Passport · Septime, Frenchie, Le Comptoir du Relais (each at least 3 weeks out).</div>
+        </div>
+
+        <div class="city-day">
+          <h3><span class="pill">Day 12 · Sun, Jun 14</span> Departure</h3>
+          <p style="margin-top:0;">Check-out by 11 AM. Save a final pastry stop for <strong><a href="https://dupainetdesidees.com/" class="attraction" target="_blank" rel="noopener noreferrer">Du Pain et des Idées</a></strong> (10th) or <strong><a href="https://www.pierreherme.com/" class="attraction" target="_blank" rel="noopener noreferrer">Pierre Hermé</a></strong> (4th) on the way out. Au revoir, Paris.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESERVATIONS TABLE -->
+<section style="background:var(--cream-2);">
+  <div class="container">
+    <div class="section-title">
+      <span class="icon">📋</span>
+      <h2>All Confirmed Reservations</h2>
+    </div>
+    <table class="res-table">
+      <thead>
+        <tr>
+          <th>Dates</th>
+          <th>Property / Service</th>
+          <th style="text-align:right;">Total (USD)</th>
+          
+          <th>Confirmation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Jun 3 → Jun 7</td>
+          <td><strong>SIXT Car Rental</strong><br>BMW 3 Series · Gatwick<br><small style="color:var(--muted);">£277.03 @ 1.27 USD/GBP</small></td>
+          <td style="text-align:right;">$352</td>
+          <td class="conf-code">see Notes</td>
+        </tr>
+        <tr>
+          <td>Jun 3 → Jun 4</td>
+          <td><strong>Charlcombe Inn</strong><br>Bath · 1 night · Free breakfast</td>
+          <td style="text-align:right;">$179</td>
+          <td class="conf-code">see Notes</td>
+        </tr>
+        <tr>
+          <td>Jun 4 → Jun 5</td>
+          <td><strong>Hotel Du Vin Exeter</strong><br>Exeter · 1 night</td>
+          <td style="text-align:right;">$158</td>
+          <td class="conf-code">see Notes</td>
+        </tr>
+        <tr>
+          <td>Jun 5 → Jun 6</td>
+          <td><strong><a href="https://www.thebraceofpheasants.co.uk/" class="attraction" target="_blank" rel="noopener noreferrer">The Brace of Pheasants</a></strong><br>Plush · 1 night · Free breakfast</td>
+          <td style="text-align:right;">$135</td>
+          <td class="conf-code">see Notes</td>
+        </tr>
+        <tr>
+          <td>Jun 6 → Jun 7</td>
+          <td><strong>Kyoto Rooms</strong><br>Winchester · 1 night</td>
+          <td style="text-align:right;">$189</td>
+          <td class="conf-code">see Notes</td>
+        </tr>
+        <tr>
+          <td>Jun 7 → Jun 10</td>
+          <td><strong>Premier Inn Hammersmith</strong><br>London · 3 nights</td>
+          <td style="text-align:right;">$605</td>
+          <td class="conf-code">see Notes</td>
+        </tr>
+        <tr>
+          <td>Jun 10 → Jun 14</td>
+          <td><strong>Hotel Des Arts Paris Montmartre</strong><br>Paris · 4 nights<br><small style="color:var(--muted);">incl. $80 city tax payable at property</small></td>
+          <td style="text-align:right;">$1,177</td>
+          <td class="conf-code">see Notes</td>
+        </tr>
+        <tr style="background: #fdf3ee !important;">
+          <td>Jun 10</td>
+          <td><strong style="color:var(--terracotta);">⚠️ Eurostar London → Paris</strong><br><em>NOT YET BOOKED — est. $200–360 for two</em></td>
+          <td style="text-align:right; color:var(--muted);">TBD</td>
+          <td class="conf-code">—</td>
+        </tr>
+        <tr style="background: var(--navy) !important; color: white;">
+          <td colspan="2" style="color:white; font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:700;">Trip total (booked items)</td>
+          <td style="text-align:right; color:white; font-weight:700; font-size:1.05rem;">$2,795</td>
+
+          <td style="color:white; opacity:.7; font-size:.8rem;">Sum: $2,802</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:1rem; color:var(--muted); font-size:.85rem;">
+      Eurostar still to be booked. SIXT converted from £277.03 at 1.27 USD/GBP — check rate at time of card statement.
+    </p>
+  </div>
+</section>
+
+<footer>
+  Itinerary built May 10, 2026 · Bon voyage 🌍<br>
+  <small style="opacity:.7;">Tip: this page works offline once loaded. Save it to your phone before flying.</small>
+</footer>
+
+<!-- LEAFLET (with CDN fallback) -->
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
+        onerror="var s=document.createElement('script');s.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';s.onload=initMap;document.head.appendChild(s);"
+        onload="initMap()"></script>
+<script>
+function initMap() {
+  if (typeof L === 'undefined') {
+    document.getElementById('trip-map').innerHTML =
+      '<div style="padding:2rem;text-align:center;color:#6b6b6b;">Map library could not load. Check your internet connection or try opening this page in a different browser.</div>';
+    return;
+  }
+  // Lodging / endpoint stops
+  const stops = [
+    { day: 'P', name: 'London Gatwick (SIXT)', subtitle: 'Pickup Jun 3 · 8:00 AM',           coords: [51.1537, -0.1821], type: 'gatwick' },
+    { day: '1', name: 'Charlcombe Inn, Bath',  subtitle: 'Lansdown · BA1 9BT · Jun 3',        coords: [51.4035, -2.3640], type: 'roadtrip' },
+    { day: '2', name: 'Hotel Du Vin, Exeter',  subtitle: 'Magdalen St · EX2 4HY · Jun 4',     coords: [50.7202, -3.5290], type: 'roadtrip' },
+    { day: '3', name: 'Brace of Pheasants, Plush', subtitle: 'Piddle Valley · DT2 7RQ · Jun 5', coords: [50.8190, -2.4060], type: 'roadtrip' },
+    { day: '4', name: 'Kyoto Rooms, Winchester', subtitle: 'Bridge St · SO23 0HN · Jun 6',    coords: [51.0640, -1.3120], type: 'roadtrip' },
+    { day: 'R', name: 'London Gatwick (return)', subtitle: 'Drop-off Jun 7 · by 5:00 PM',     coords: [51.1537, -0.1821], type: 'gatwick' },
+    { day: '5', name: 'Premier Inn Hammersmith', subtitle: '181 Talgarth Road · W6 8DN · Jun 7–10', coords: [51.4905, -0.2150], type: 'london' },
+    { day: '8', name: 'Hotel Des Arts Montmartre', subtitle: '5 Rue Tholoze · 75018 · Jun 10–14',   coords: [48.8856, 2.3375], type: 'paris' },
+  ];
+
+  // Scenic / en-route stops along the roadtrip
+  const scenicStops = [
+    { name: 'Avebury Stone Circle', subtitle: 'Day 1 · walk among the stones · Red Lion pub',  coords: [51.4286, -1.8543] },
+    { name: 'Cheddar Gorge',        subtitle: 'Day 2 · B3135 hairpins',                        coords: [51.2820, -2.7660] },
+    { name: 'Wells',                subtitle: 'Day 2 · scissor arches in the cathedral',       coords: [51.2098, -2.6457] },
+    { name: 'Beer (Devon)',         subtitle: 'Day 3 · crab sandwich on the beach',            coords: [50.6967, -3.0888] },
+    { name: 'Lyme Regis',           subtitle: 'Day 3 · the Cobb · fossil hunt',                coords: [50.7253, -2.9354] },
+    { name: 'Chesil Beach (B3157)', subtitle: 'Day 3 · best coastal drive in England',         coords: [50.6720, -2.6920] },
+    { name: 'Maiden Castle',        subtitle: 'Day 4 · dawn hike · Iron Age hillfort',         coords: [50.6948, -2.4710] },
+    { name: 'Beaulieu (New Forest)', subtitle: 'Day 4 · wild ponies on the road',              coords: [50.8195, -1.4470] },
+  ];
+
+  const map = L.map('trip-map', { scrollWheelZoom: false }).setView([50.6, -0.5], 6);
+
+  // Primary tiles: OpenStreetMap (most reliable, no API key needed)
+  const osmTiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 19
+  });
+
+  // Fallback tiles: CartoDB Voyager (cleaner look, in case OSM is rate-limited)
+  const cartoTiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    subdomains: 'abcd',
+    maxZoom: 18
+  });
+
+  // Add OSM first; if its first tile fails, swap to Carto
+  osmTiles.addTo(map);
+  osmTiles.on('tileerror', function tryFallback() {
+    osmTiles.off('tileerror', tryFallback);
+    map.removeLayer(osmTiles);
+    cartoTiles.addTo(map);
+  });
+
+  // Day / lodging markers
+  stops.forEach(s => {
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="day-marker ${s.type}">${s.day}</div>`,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    });
+    L.marker(s.coords, { icon }).addTo(map)
+      .bindPopup(`<strong>${s.name}</strong><small>${s.subtitle}</small>`);
+  });
+
+  // Scenic stop markers
+  scenicStops.forEach(s => {
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="scenic-marker"></div>`,
+      iconSize: [14, 14],
+      iconAnchor: [7, 7]
+    });
+    L.marker(s.coords, { icon }).addTo(map)
+      .bindPopup(`<strong>${s.name}</strong><small>${s.subtitle}</small>`);
+  });
+
+  // Roadtrip route (orange line) — threads through the scenic stops
+  const roadtripCoords = [
+    [51.1537, -0.1821], // Gatwick
+    [51.0050, -0.7270], // dropping south to A272 (Petworth area)
+    [51.0250, -1.3120], // A272 along South Downs through Winchester area
+    [51.4286, -1.8543], // Avebury
+    [51.4035, -2.3640], // Bath
+    [51.2820, -2.7660], // Cheddar Gorge
+    [51.2098, -2.6457], // Wells
+    [51.1500, -3.1500], // A39 Quantocks
+    [50.7202, -3.5290], // Exeter
+    [50.6967, -3.0888], // Beer
+    [50.7253, -2.9354], // Lyme Regis
+    [50.7400, -2.7560], // Bridport
+    [50.6720, -2.6920], // Chesil/B3157
+    [50.6080, -2.4540], // Weymouth
+    [50.8190, -2.4060], // Plush
+    [50.6948, -2.4710], // Maiden Castle (Day 4 dawn)
+    [50.8195, -1.4470], // Beaulieu / New Forest
+    [51.0640, -1.3120], // Winchester
+    [51.1537, -0.1821], // Gatwick return
+  ];
+  L.polyline(roadtripCoords, { color: '#c75d3a', weight: 4, opacity: 0.85, smoothFactor: 1 }).addTo(map);
+
+  // London → Paris dashed line (Eurostar)
+  L.polyline([[51.4905, -0.2150], [48.8856, 2.3375]], {
+    color: '#c8a04c', weight: 3, opacity: 0.9, dashArray: '8 8'
+  }).addTo(map);
+
+  // Fit bounds to show whole trip
+  const allCoords = stops.map(s => s.coords).concat(scenicStops.map(s => s.coords));
+  map.fitBounds(L.latLngBounds(allCoords).pad(0.1));
+}
+
+// Safety: if the script tag's onload didn't fire (e.g. cached), kick it off when the DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof L !== 'undefined' && !document.getElementById('trip-map').classList.contains('leaflet-container')) {
+    initMap();
+  }
+});
+</script>
+
+</body>
+</html>
